@@ -1,10 +1,7 @@
 import unittest
 
-from model.game import Game
 from model.game_rules import GameRules
-from model.player_score_history import PlayerScoreHistory
 from service.game_rules_service import validate_rounds, ExceededRounds, validate_score, ScoreBusts
-from service.game_service import can_add_player_round
 
 
 class TestValidateRounds(unittest.TestCase):

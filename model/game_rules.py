@@ -13,6 +13,9 @@ class GameRules:
     minRoundsToWin: Optional[int] = None
     maxRounds: Optional[int] = None
 
+    minRoundScore: Optional[int] = None
+    maxRoundScore: Optional[int] = None
+
     minPlayers: Optional[int] = None
     maxPlayers: Optional[int] = None
 
@@ -21,3 +24,6 @@ class GameRules:
 
     highScoreWins: Optional[bool] = None
     scoreIncreases: Optional[bool] = None
+
+    # a Set of possible scores
+    setScores: Optional[set[int]] = None
