@@ -1,4 +1,20 @@
+from math import inf
+
 from model.game_rules import GameRules
+from model.player import Player
+from model.player_score_history import PlayerScoreHistory
+
+
+class ExceededMaxPlayers(Exception):
+    pass
+
+
+class MinPlayersNotMet(Exception):
+    pass
+
+
+class PlayerAlreadyExists(Exception):
+    pass
 
 
 class ExceededRounds(Exception):
@@ -7,6 +23,27 @@ class ExceededRounds(Exception):
 
 class ScoreBusts(Exception):
     pass
+
+
+# Pre game ######
+
+
+def validate_players(rules: GameRules, players: [Player]):
+    if rules.minPlayers is not None and rules.minPlayers > len(players):
+        raise MinPlayersNotMet
+    return True
+
+
+def validate_player(rules: GameRules, players: [Player], player: Player):
+    if rules.maxPlayers is not None and rules.maxPlayers < len(players) + 1:
+        raise ExceededMaxPlayers(f'Max number of players already met {rules.maxPlayers}')
+    playerAlreadyExists = next((True for p in players if p == player), False)
+    if playerAlreadyExists:
+        raise PlayerAlreadyExists(f'Player with key {player.key} already exists')
+    return True
+
+
+# During game #####
 
 
 def validate_rounds(rules: GameRules, rounds):
@@ -21,3 +58,23 @@ def validate_score(rules: GameRules, current_score, round_score):
     if rules.canBust and not rules.highScoreWins and current_score + round_score < rules.winningScore:
         raise ScoreBusts(f'Score cannot be lower than {rules.winningScore}')
     return True
+
+
+def score_beats_winner(highScoreWins, winningScore, score):
+    return score > winningScore if highScoreWins else score < winningScore
+
+
+def determine_winner(rules: GameRules, scoreHistory: dict[str, PlayerScoreHistory]):
+    highScoreWins = rules.highScoreWins is True or rules.highScoreWins is None
+    winningScore = -inf if highScoreWins else inf
+    winningPlayerKey = None
+    if len(scoreHistory.keys()) > 0:
+        for playerKey, playerScores in scoreHistory.items():
+            if len(playerScores.scores) > 0 and \
+                    score_beats_winner(highScoreWins, winningScore, playerScores.currentScore):
+                winningScore = playerScores.currentScore
+                winningPlayerKey = playerKey
+    return winningPlayerKey
+
+
+# End game #####
