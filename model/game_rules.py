@@ -7,6 +7,8 @@ from typing import Optional
 class GameRules:
     key: str
     startingScore: Optional[int] = None
+    # Used to set default sign in the UI
+    scoreIncreasesByDefault: Optional[bool] = None
     defaultScoreStep: Optional[int] = None
 
     rounds: Optional[int] = None
@@ -23,7 +25,8 @@ class GameRules:
     canBust: Optional[int] = None
 
     highScoreWins: Optional[bool] = None
-    scoreIncreases: Optional[bool] = None
 
     # a Set of possible scores
     setScores: Optional[set[int]] = None
+
+    # TODO a set of required score conditions - think yahtzee

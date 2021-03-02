@@ -4,7 +4,8 @@ from model.game_rules import GameRules
 from model.player import Player
 from model.player_score_history import PlayerScoreHistory
 from service.game_rules_service import validate_rounds, ExceededRounds, validate_score, ScoreBusts, validate_player, \
-    ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner
+    ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner, ScoreNotInSet, \
+    ScoreSignInvalid, build_player_score_history
 
 
 # Pre game validations ######
@@ -19,14 +20,12 @@ class ValidatePlayer(unittest.TestCase):
         players = [playerOne]
         self.assertRaises(ExceededMaxPlayers, validate_player, rules, players, playerTwo)
 
-
     def test_can_add_player_under_max(self):
         rules = GameRules(key="key", maxPlayers=2)
         playerOne = Player(key="1")
         playerTwo = Player(key="2")
         players = [playerOne]
         assert validate_player(rules, players, playerTwo) is True
-
 
     def test_cannot_add_player_already_exists(self):
         rules = GameRules(key="key", maxPlayers=2)
@@ -59,6 +58,26 @@ class ValidatePlayers(unittest.TestCase):
         players = [playerOne, playerTwo]
         self.assertRaises(MinPlayersNotMet, validate_players, rules, players)
 
+
+class BuildPlayerScoreHistory(unittest.TestCase):
+
+    def test_player_score_historys_should_have_default_starting_score(self):
+        rules = GameRules(key='key', startingScore=100)
+        playerOne = Player(key='one')
+        playerTwo = Player(key='two')
+        playerScoreHistory = build_player_score_history(rules, [playerOne, playerTwo])
+        assert playerScoreHistory['one'].currentScore == 100
+        assert playerScoreHistory['two'].currentScore == 100
+
+    def test_player_score_historys_should_start_at_zero_if_no_default_starting_score(self):
+        rules = GameRules(key='key')
+        playerOne = Player(key='one')
+        playerTwo = Player(key='two')
+        playerScoreHistory = build_player_score_history(rules, [playerOne, playerTwo])
+        assert playerScoreHistory['one'].currentScore == 0
+        assert playerScoreHistory['two'].currentScore == 0
+
+
 # During game validations #####
 
 
@@ -86,6 +105,13 @@ class TestValidateScore(unittest.TestCase):
         rules = GameRules(key="key", canBust=True, winningScore=0, highScoreWins=False)
         self.assertRaises(ScoreBusts, validate_score, rules, 1, -6)
 
+    def test_can_add_score_if_in_set(self):
+        rules = GameRules(key="key", setScores={1, 3, 5, 9})
+        assert validate_score(rules, 1, 3) is True
+
+    def test_cannot_add_score_if_not_in_set(self):
+        rules = GameRules(key="key", setScores={1, 3, 5, 9})
+        self.assertRaises(ScoreNotInSet, validate_score, rules, 1, 2)
 
 
 class TestDetermineWinner(unittest.TestCase):

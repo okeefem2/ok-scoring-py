@@ -25,6 +25,14 @@ class ScoreBusts(Exception):
     pass
 
 
+class ScoreNotInSet(Exception):
+    pass
+
+
+class ScoreSignInvalid(Exception):
+    pass
+
+
 # Pre game ######
 
 
@@ -43,6 +51,14 @@ def validate_player(rules: GameRules, players: [Player], player: Player):
     return True
 
 
+def build_player_score_history(rules: GameRules, players: [Player]) -> {str, PlayerScoreHistory}:
+    playerScoreHistory = {}
+    startingScore = rules.startingScore if rules.startingScore else 0
+    for player in players:
+        playerScoreHistory[player.key] = PlayerScoreHistory(currentScore=startingScore, scores=[])
+    return playerScoreHistory
+
+
 # During game #####
 
 
@@ -53,10 +69,13 @@ def validate_rounds(rules: GameRules, rounds):
 
 
 def validate_score(rules: GameRules, current_score, round_score):
+    if rules.setScores and round_score not in rules.setScores:
+        raise ScoreNotInSet(f'{round_score} is not a valid score')
     if rules.canBust and rules.highScoreWins and current_score + round_score > rules.winningScore:
         raise ScoreBusts(f'Score cannot exceed {rules.winningScore}')
     if rules.canBust and not rules.highScoreWins and current_score + round_score < rules.winningScore:
         raise ScoreBusts(f'Score cannot be lower than {rules.winningScore}')
+
     return True
 
 
