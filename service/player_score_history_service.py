@@ -1,4 +1,4 @@
-from model.player_score_history import PlayerScoreHistory
+from model.playerScoreHistory import PlayerScoreHistory
 
 
 def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index):

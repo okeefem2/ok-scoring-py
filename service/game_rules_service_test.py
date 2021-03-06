@@ -1,8 +1,8 @@
 import unittest
 
-from model.game_rules import GameRules
+from model.gameRules import GameRules
 from model.player import Player
-from model.player_score_history import PlayerScoreHistory
+from model.playerScoreHistory import PlayerScoreHistory
 from service.game_rules_service import validate_rounds, ExceededRounds, validate_score, ScoreBusts, validate_player, \
     ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner, ScoreNotInSet, \
     ScoreSignInvalid, build_player_score_history

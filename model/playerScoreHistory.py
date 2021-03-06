@@ -5,4 +5,6 @@ from dataclasses import dataclass
 class PlayerScoreHistory:
     currentScore: int
     scores: list[int]
+    playerKey: str
+    gameKey: str
     key: str = None

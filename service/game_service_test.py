@@ -1,7 +1,7 @@
 import unittest
 
 from model.game import Game
-from model.player_score_history import PlayerScoreHistory
+from model.playerScoreHistory import PlayerScoreHistory
 from service.game_service import can_add_player_round
 
 

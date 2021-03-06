@@ -2,10 +2,9 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class Player:
+class FavoriteGame:
     key: str
-    name: str
-    favorite: bool
+    description: str
 
     def __eq__(self, other):
-        return self.key == other.key
+        return self.description == other.description

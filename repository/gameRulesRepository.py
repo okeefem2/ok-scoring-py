@@ -1,5 +1,5 @@
-from model.game_rules import GameRules
-from repository.abstract_repository import AbstractRepository
+from model.gameRules import GameRules
+from repository.abstractRepository import AbstractRepository
 
 
 class GameRulesRepository(AbstractRepository):

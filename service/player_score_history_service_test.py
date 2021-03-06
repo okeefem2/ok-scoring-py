@@ -1,6 +1,6 @@
 import unittest
 
-from model.player_score_history import PlayerScoreHistory
+from model.playerScoreHistory import PlayerScoreHistory
 from service.player_score_history_service import set_round_score
 
 
