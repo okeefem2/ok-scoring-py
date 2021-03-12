@@ -1,8 +1,8 @@
 from math import inf
 
-from model.gameRules import GameRules
-from model.player import Player
-from model.playerScoreHistory import PlayerScoreHistory
+from src.model.gameRules import GameRules
+from src.model.player import Player
+from src.model.playerScoreHistory import PlayerScoreHistory
 
 
 class ExceededMaxPlayers(Exception):

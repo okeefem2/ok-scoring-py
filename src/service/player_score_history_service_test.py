@@ -1,7 +1,7 @@
 import unittest
 
-from model.playerScoreHistory import PlayerScoreHistory
-from service.player_score_history_service import set_round_score
+from src.model.playerScoreHistory import PlayerScoreHistory
+from src.service.player_score_history_service import set_round_score
 
 
 class TestSetRoundScore(unittest.TestCase):

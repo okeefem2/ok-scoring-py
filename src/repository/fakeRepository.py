@@ -1,6 +1,4 @@
-from abc import ABC
-
-from repository.abstractRepository import AbstractRepository
+from src.repository.abstractRepository import AbstractRepository
 
 
 class FakeRepository(AbstractRepository):

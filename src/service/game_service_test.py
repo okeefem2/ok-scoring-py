@@ -1,8 +1,8 @@
 import unittest
 
-from model.game import Game
-from model.playerScoreHistory import PlayerScoreHistory
-from service.game_service import can_add_player_round
+from src.model.game import Game
+from src.model.playerScoreHistory import PlayerScoreHistory
+from src.service.game_service import can_add_player_round
 
 
 class TestCanAddPlayerRound(unittest.TestCase):

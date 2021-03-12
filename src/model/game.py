@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from model.gameRules import GameRules
-from model.playerScoreHistory import PlayerScoreHistory
+from src.model.gameRules import GameRules
+from src.model.playerScoreHistory import PlayerScoreHistory
 
 
 @dataclass(frozen=True)
@@ -11,6 +11,7 @@ class Game:
     date: int
     duration: int
     winningPlayerKey: str
-    # TODO how do these work with the mapper
+    # TODO this will need to be set after loading or something
     scoreHistory: dict[str, PlayerScoreHistory]
+    scores: set[PlayerScoreHistory]
     rules: Optional[GameRules] = None

@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID, ARRAY
 
 metadata = MetaData()
 
-playerScoreHistory = Table(
+player_score_history = Table(
     "game",
     metadata,
     Column("key", UUID, primary_key=True),

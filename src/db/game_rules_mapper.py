@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 metadata = MetaData()
 
-gameRules = Table(
+game_rules = Table(
     "gameRules",
     metadata,
     Column("key", UUID, primary_key=True),
