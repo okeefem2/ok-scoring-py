@@ -1,7 +1,7 @@
-from sqlalchemy import MetaData, Column, Table, Boolean, String
+from sqlalchemy import Column, Table, Boolean, String
 from sqlalchemy.dialects.postgresql import UUID
 
-metadata = MetaData()
+from src.db.orm import metadata
 
 player = Table(
     "player",

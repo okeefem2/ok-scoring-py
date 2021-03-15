@@ -5,13 +5,17 @@ from src.model.gameRules import GameRules
 from src.model.playerScoreHistory import PlayerScoreHistory
 
 
-@dataclass(frozen=True)
+@dataclass()
 class Game:
+
+    key: str
     description: str
     date: int
-    duration: int
-    winningPlayerKey: str
+
+    duration: Optional[int] = None
+    winningPlayerKey: Optional[str] = None
+
     # TODO this will need to be set after loading or something
-    scoreHistory: dict[str, PlayerScoreHistory]
-    scores: set[PlayerScoreHistory]
+    scoreHistory: dict[str, PlayerScoreHistory] = None
+    scores: set[PlayerScoreHistory] = None
     rules: Optional[GameRules] = None

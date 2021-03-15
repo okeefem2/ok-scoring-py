@@ -1,7 +1,7 @@
-from sqlalchemy import MetaData, Integer, Column, Table, Boolean, ForeignKey
+from sqlalchemy import Integer, Column, Table, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 
-metadata = MetaData()
+from src.db.orm import metadata
 
 game_rules = Table(
     "gameRules",

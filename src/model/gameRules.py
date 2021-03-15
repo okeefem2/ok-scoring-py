@@ -2,10 +2,14 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-# TODO think about how to make this more generic... think PROMISE rules
-@dataclass(frozen=True)
+@dataclass()
 class GameRules:
     key: str
+    gameKey: Optional[str] = None  # TODO think about this more
+    # I wonder if it could be better to have rules be set in stone and create a join table
+    # One big thing to think about will be editing rules though...
+    # I think it would probably be better to have a rules template or something, and
+    # Probably an optional foreign key on this table
     startingScore: Optional[int] = None
     # Used to set default sign in the UI
     scoreIncreasesByDefault: Optional[bool] = None

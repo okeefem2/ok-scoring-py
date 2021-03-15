@@ -37,7 +37,9 @@ class ScoreSignInvalid(Exception):
 
 
 def validate_players(rules: GameRules, players: [Player]):
-    if rules.minPlayers is not None and rules.minPlayers > len(players):
+    if rules is not None \
+            and rules.minPlayers is not None \
+            and rules.minPlayers > len(players):
         raise MinPlayersNotMet
     return True
 

@@ -1,7 +1,7 @@
-from sqlalchemy import MetaData, Column, Table, String
+from sqlalchemy import Column, Table, String
 from sqlalchemy.dialects.postgresql import UUID
 
-metadata = MetaData()
+from src.db.orm import metadata
 
 favorite_game = Table(
     "favoriteGames",

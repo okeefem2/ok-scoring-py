@@ -1,4 +1,5 @@
 from src.model.playerScoreHistory import PlayerScoreHistory
+from src.repository.helpers import unique_id
 
 
 def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index):
@@ -21,3 +22,19 @@ def fill_missing_rounds(scores, ending_rounds, current_rounds):
 
 def calculate_current_score(scores):
     return sum(scores)
+
+
+def build_player_score_history(player_key, game_key, starting_score=0, scores=None) -> PlayerScoreHistory:
+    scores = scores if scores is not None else []
+
+    return PlayerScoreHistory(
+        key=unique_id(),
+        gameKey=game_key,
+        playerKey=player_key,
+        currentScore=starting_score,
+        scores=scores
+    )
+
+
+def build_score_history(player_keys, game_key, starting_score=0, scores=None) -> dict[str, PlayerScoreHistory]:
+    return {key: build_player_score_history(key, game_key, starting_score, scores) for key in player_keys}
