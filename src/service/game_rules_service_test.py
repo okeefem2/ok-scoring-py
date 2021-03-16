@@ -5,18 +5,28 @@ from src.model.player import Player
 from src.model.playerScoreHistory import PlayerScoreHistory
 from src.service.game_rules_service import validate_rounds, ExceededRounds, validate_score, ScoreBusts, validate_player, \
     ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner, ScoreNotInSet, \
-    build_player_score_history
+    build_player_score_history, create_game_rules
 
 
 # Pre game validations ######
+
+class CreateGameRules(unittest.TestCase):
+
+    def test_starting_score(self):
+        rules = create_game_rules({'startingScore': 10})
+        assert rules.startingScore == 10
+
+    def test_ignore_adding_nonexistent_prop(self):
+        rules = create_game_rules({'weight': 10})
+        self.assertRaises(AttributeError, getattr, rules, 'weight')
 
 
 class ValidatePlayer(unittest.TestCase):
 
     def test_cannot_add_player_over_max(self):
         rules = GameRules(key="key", maxPlayers=1)
-        playerOne = Player(key="1")
-        playerTwo = Player(key="2")
+        playerOne = Player(key="1", 'name2', favorite=False)
+        playerTwo = Player(key="2", name='name2', favorite=False)
         players = [playerOne]
         self.assertRaises(ExceededMaxPlayers, validate_player, rules, players, playerTwo)
 

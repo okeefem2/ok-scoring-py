@@ -2,6 +2,7 @@ import time
 
 from src.model.game import Game
 from src.model.gameRules import GameRules
+from src.model.player import Player
 from src.repository.helpers import unique_id
 from src.service.game_rules_service import validate_rounds, validate_score, validate_players
 
@@ -14,23 +15,23 @@ class DescriptionRequired(Exception):
 
 
 def add_player_round(game, playerKey: str, score: int, round_index: int):
-    if can_add_player_round(game, playerKey, score):
+    if can_add_player_round(game.scoreHistory, game.rules, playerKey, score):
         set_round_score(game.scoreHistory[playerKey], score, round_index)
 
 
-def can_add_player_round(game, playerKey: str, score: int) -> bool:
+def can_add_player_round(scoreHistory, rules, playerKey: str, score: int) -> bool:
     # Maybe could have a rule to add the player if they do not exist
-    if playerKey not in game.scoreHistory:
+    if playerKey not in scoreHistory:
         return False
-    if game.rules is None:  # NO RULES!!
+    if rules is None:  # NO RULES!!
         return True
 
-    playerScoreHistory = game.scoreHistory[playerKey]
-    return validate_rounds(game.rules, len(playerScoreHistory.scores)) \
-           and validate_score(game.rules, playerScoreHistory.currentScore, score)
+    playerScoreHistory = scoreHistory[playerKey]
+    return validate_rounds(rules, len(playerScoreHistory.scores)) \
+           and validate_score(rules, playerScoreHistory.currentScore, score)
 
 
-def create_game(description, players=None, rules: GameRules = None) -> Game:
+def create_game(description, players: [Player] = None, rules: GameRules = None) -> Game:
     if validate_players(rules, players):
         if description is None:
             raise DescriptionRequired('Description required to create game')

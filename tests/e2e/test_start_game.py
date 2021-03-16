@@ -14,9 +14,7 @@ def test_api_returns_game(add_game):
         'Lexie'
     ]
 
-    game_key = unique_id()
-    date = now()
+    rules = {
 
-    # game = create_game()
-
-    rules = GameRules(key=unique_id(), winningScore=100, gameKey=game_key)
+    }
+    description = 'Peanuts'

@@ -3,6 +3,7 @@ from math import inf
 from src.model.gameRules import GameRules
 from src.model.player import Player
 from src.model.playerScoreHistory import PlayerScoreHistory
+from src.repository.helpers import unique_id
 
 
 class ExceededMaxPlayers(Exception):
@@ -34,6 +35,14 @@ class ScoreSignInvalid(Exception):
 
 
 # Pre game ######
+
+# TODO validate game rules properties
+def create_game_rules(rules_dict: dict) -> GameRules:
+    rules = GameRules(key=unique_id())
+    for key in rules_dict:
+        if hasattr(rules, key):
+            setattr(rules, key, rules_dict[key])
+    return rules
 
 
 def validate_players(rules: GameRules, players: [Player]):
