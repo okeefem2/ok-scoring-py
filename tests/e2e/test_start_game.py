@@ -1,20 +1,33 @@
 import pytest
+import requests
 
-from src.model.game import Game
-from src.model.gameRules import GameRules
-from src.repository.helpers import unique_id, now
 
 
 @pytest.mark.usefixtures('restart_api')
-def test_api_returns_game(add_game):
+def test_api_returns_game():
     players = [
         'Meredith',
         'Maggie',
         'Amelia',
         'Lexie'
     ]
-
     rules = {
-
+        'winningScore': 100
     }
     description = 'Peanuts'
+
+    data = {
+        'description': description,
+        'rules': rules,
+        'players': players
+    }
+
+    api_url = get_api_url()
+
+    response = requests.post(f'{api_url}/game', json=data)
+
+    assert response.status_code == 201
+    game = response.json()
+    assert game.key is not None
+
+    # Next test fetching the game and checking equality to ensure persistence

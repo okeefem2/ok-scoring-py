@@ -1,5 +1,6 @@
-from src.model.gameRules import GameRules
-from src.repository.abstractRepository import AbstractRepository
+
+from ok_scoring.model.game_rules import GameRules
+from ok_scoring.repository.abstract_repository import AbstractRepository
 
 
 class GameRulesRepository(AbstractRepository):
@@ -20,5 +21,7 @@ class GameRulesRepository(AbstractRepository):
         if gameRules is not None:
             self.session.delete(gameRules)
         else:
-            # TODO not found error
+            return None
 
+    def update(self, entity):
+        return self.session.update(entity)

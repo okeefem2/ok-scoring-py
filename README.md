@@ -22,3 +22,8 @@ use docker compose to build the volume, images and containers needed to run and 
 `docker-compose up -d`
 
 nav to <http://localhost:8080> to access the database.
+
+### pytest
+
+
+

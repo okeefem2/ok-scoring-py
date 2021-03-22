@@ -1,19 +1,15 @@
-from sqlalchemy import MetaData
 from sqlalchemy.orm import mapper, relationship
 
-from src.db.favorite_game_mapper import favorite_game
-from src.db.game_rules_mapper import game_rules
-from src.db.player_mapper import player
-from src.db.player_score_history_mapper import player_score_history
-from src.model import game
-from src.model.favoriteGame import FavoriteGame
-from src.model.game import Game
-from src.model.gameRules import GameRules
-from src.model.player import Player
-from src.model.playerScoreHistory import PlayerScoreHistory
-
-metadata = MetaData()
-
+from ok_scoring.favorite_game_mapper import favorite_game
+from ok_scoring.db.game_rules_mapper import game_rules
+from ok_scoring.db.player_mapper import player
+from ok_scoring.db.player_score_history_mapper import player_score_history
+from ok_scoring.db.game_mapper import game
+from ok_scoring.model.favorite_game import FavoriteGame
+from ok_scoring.model.game import Game
+from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.player import Player
+from ok_scoring.model.player_score_history import PlayerScoreHistory
 
 def start_mappers():
     game_rules_mapper = mapper(

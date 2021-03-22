@@ -1,13 +1,13 @@
 import time
 
-from src.model.game import Game
-from src.model.gameRules import GameRules
-from src.model.player import Player
-from src.repository.helpers import unique_id
-from src.service.game_rules_service import validate_rounds, validate_score, validate_players
+from ok_scoring.model.game import Game
+from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.player import Player
+from ok_scoring.repository.helpers import unique_id
 
 # Create a builder function
-from src.service.player_score_history_service import set_round_score, build_score_history
+from ok_scoring.service.game_rules_service import validate_rounds, validate_score, validate_players
+from ok_scoring.service.player_score_history_service import set_round_score, build_score_history
 
 
 class DescriptionRequired(Exception):

@@ -1,5 +1,5 @@
-from src.model.player import Player
-from src.repository.helpers import unique_id
+from ok_scoring.model.player import Player
+from ok_scoring.repository.helpers import unique_id
 
 
 def create_player(name: str) -> Player:

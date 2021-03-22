@@ -1,6 +1,6 @@
 import unittest
 
-from src.service.player_service import create_player, create_players
+from ok_scoring.service.player_service import create_player, create_players
 
 
 class TestCreatePlayer(unittest.TestCase):

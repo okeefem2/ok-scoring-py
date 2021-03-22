@@ -1,5 +1,5 @@
-from src.model.playerScoreHistory import PlayerScoreHistory
-from src.repository.helpers import unique_id
+from ok_scoring.model.player_score_history import PlayerScoreHistory
+from ok_scoring.repository.helpers import unique_id
 
 
 def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index):

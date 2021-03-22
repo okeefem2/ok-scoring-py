@@ -1,22 +1,41 @@
 import unittest
 
-from src.model.game import Game
-from src.model.gameRules import GameRules
-from src.model.playerScoreHistory import PlayerScoreHistory
-from src.repository.helpers import unique_id
-from src.service.game_service import can_add_player_round, create_game
+from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.player_score_history import PlayerScoreHistory
+from ok_scoring.repository.helpers import unique_id
+from ok_scoring.service.game_service import can_add_player_round, create_game
 
 
 class TestCanAddPlayerRound(unittest.TestCase):
     def test_cannot_add_score_for_non_player_no_rules(self):
-        player_score_history_one = PlayerScoreHistory(key='one', scores=[1, 3, -2], currentScore=1)
-        game = Game(scoreHistory={'one': player_score_history_one})
-        assert can_add_player_round(game, 'two', 6) is False
+        player_score_history_one = PlayerScoreHistory(
+            key='one',
+            scores=[1, 3, -2],
+            currentScore=1,
+            playerKey='1',
+            gameKey='1'
+        )
+        assert can_add_player_round(
+            scoreHistory=player_score_history_one,
+            playerKey='two',
+            score=6,
+            rules=None
+        ) is False
 
     def test_can_add_score_for_player_no_rules(self):
-        player_score_history_one = PlayerScoreHistory(key='one', scores=[1, 3, -2], currentScore=1)
-        game = Game(scoreHistory={'one': player_score_history_one})
-        assert can_add_player_round(game, 'one', 6) is True
+        player_score_history_one = PlayerScoreHistory(
+            key='one',
+            scores=[1, 3, -2],
+            currentScore=1,
+            playerKey='1',
+            gameKey='1'
+        )
+        assert can_add_player_round(
+            scoreHistory=player_score_history_one,
+            playerKey='one',
+            score=6,
+            rules=None
+        ) is True
 
 
 class TestCreateGame(unittest.TestCase):

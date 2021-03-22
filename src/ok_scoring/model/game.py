@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from src.model.gameRules import GameRules
-from src.model.playerScoreHistory import PlayerScoreHistory
+from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.player_score_history import PlayerScoreHistory
 
 
 @dataclass()

@@ -1,9 +1,9 @@
 from math import inf
 
-from src.model.gameRules import GameRules
-from src.model.player import Player
-from src.model.playerScoreHistory import PlayerScoreHistory
-from src.repository.helpers import unique_id
+from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.player import Player
+from ok_scoring.model.player_score_history import PlayerScoreHistory
+from ok_scoring.repository.helpers import unique_id
 
 
 class ExceededMaxPlayers(Exception):
@@ -62,11 +62,16 @@ def validate_player(rules: GameRules, players: [Player], player: Player):
     return True
 
 
-def build_player_score_history(rules: GameRules, players: [Player]) -> {str, PlayerScoreHistory}:
+def build_player_score_history(rules: GameRules, players: [Player], gameKey: str) -> {str, PlayerScoreHistory}:
     playerScoreHistory = {}
     startingScore = rules.startingScore if rules.startingScore else 0
     for player in players:
-        playerScoreHistory[player.key] = PlayerScoreHistory(currentScore=startingScore, scores=[])
+        playerScoreHistory[player.key] = PlayerScoreHistory(
+            currentScore=startingScore,
+            scores=[],
+            playerKey=player.key,
+            gameKey=gameKey
+        )
     return playerScoreHistory
 
 

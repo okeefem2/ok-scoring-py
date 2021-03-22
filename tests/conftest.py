@@ -10,14 +10,6 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, clear_mappers
 
-from src.db.orm import metadata, start_mappers
-
-from src import ok_scoring_config
-from src.model.game import Game
-from src.model.gameRules import GameRules
-from src.model.player import Player
-from src.repository.helpers import unique_id
-
 
 @pytest.fixture
 def in_memory_db():

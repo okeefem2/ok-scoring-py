@@ -1,4 +1,4 @@
-from src.repository.abstractRepository import AbstractRepository
+from ok_scoring.repository.abstract_repository import AbstractRepository
 
 
 class FakeRepository(AbstractRepository):
