@@ -1,6 +1,6 @@
 import pytest
 import requests
-
+from ok_scoring.ok_scoring_config import get_api_url
 
 
 @pytest.mark.usefixtures('restart_api')

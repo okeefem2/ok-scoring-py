@@ -1,6 +1,6 @@
 from sqlalchemy.orm import mapper, relationship
 
-from ok_scoring.favorite_game_mapper import favorite_game
+from ok_scoring.db.favorite_game_mapper import favorite_game
 from ok_scoring.db.game_rules_mapper import game_rules
 from ok_scoring.db.player_mapper import player
 from ok_scoring.db.player_score_history_mapper import player_score_history

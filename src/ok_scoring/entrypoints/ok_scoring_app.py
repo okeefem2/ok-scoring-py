@@ -2,7 +2,7 @@ from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import ok_scoring_config
+from ok_scoring import ok_scoring_config
 from ok_scoring.db import orm
 from ok_scoring.service.game_rules_service import create_game_rules
 from ok_scoring.service.game_service import create_game
@@ -11,6 +11,11 @@ from ok_scoring.service.player_service import create_players
 orm.start_mappers()
 get_session = sessionmaker(bind=create_engine(ok_scoring_config.get_postgres_uri()))
 app = Flask(__name__)
+
+
+@app.route('/', methods=['GET'])
+def home():
+    return 'Hello OK Scoring', 201
 
 
 @app.route('/game', methods=['POST'])

@@ -5,6 +5,12 @@ from pathlib import Path
 
 import pytest
 import requests
+from ok_scoring import ok_scoring_config
+from ok_scoring.db.metadata import metadata
+from ok_scoring.db.orm import start_mappers
+from ok_scoring.model.game import Game
+from ok_scoring.model.game_rules import GameRules
+from ok_scoring.repository.helpers import unique_id
 from requests.exceptions import ConnectionError
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine
@@ -125,6 +131,6 @@ def add_game(postgres_session):
 
 @pytest.fixture
 def restart_api():
-    (Path(__file__).parent / "ok_scoring.py").touch()
+    (Path(__file__).parent / "ok_scoring_app.py").touch()
     time.sleep(0.5)
     wait_for_webapp_to_come_up()

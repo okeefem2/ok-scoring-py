@@ -21,7 +21,7 @@ POSTGRES_DB={db name}
 use docker compose to build the volume, images and containers needed to run and connect to the database
 `docker-compose up -d`
 
-nav to <http://localhost:8080> to access the database.
+<http://localhost:5005> to access the app locally
 
 ### pytest
 
