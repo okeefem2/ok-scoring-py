@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -20,8 +20,13 @@ def home():
 
 @app.route('/game', methods=['POST'])
 def create_game_endpoint():
-    players = create_players(request.json()['players'])
-    rules = create_game_rules(request.json()['rules'])
-    game = create_game(request.json()['description'], players, rules)
-    return {'game': game}, 201
+    try:
+        players = create_players(request.json['players'])
+        rules = create_game_rules(request.json['rules'])
+        game = create_game(description=request.json['description'], players=players, rules=rules)
+        return {'game': game}, 201
+    except BaseException as e:
+        return {'error': "{0}".format(e)}, 500
+
+
 

@@ -16,6 +16,5 @@ class Game:
     winningPlayerKey: Optional[str] = None
 
     # TODO this will need to be set after loading or something
-    scoreHistory: dict[str, PlayerScoreHistory] = None
-    scores: set[PlayerScoreHistory] = None
+    scoreHistory: Optional[dict[str, PlayerScoreHistory]] = None
     rules: Optional[GameRules] = None

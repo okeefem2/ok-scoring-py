@@ -10,6 +10,8 @@ from ok_scoring.model.game import Game
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
+from sqlalchemy.orm.collections import attribute_mapped_collection
+
 
 def start_mappers():
     game_rules_mapper = mapper(
@@ -26,10 +28,14 @@ def start_mappers():
         game,
         properties={
             'rules': relationship(
-                game_rules_mapper
+                game_rules_mapper,
+                uselist=False,
+                cascade='all, delete-orphan'
             ),
-            'scores': relationship(
-                player_score_history_mapper, collection_class=set
+            'scoreHistory': relationship(
+                player_score_history_mapper,
+                collection_class=attribute_mapped_collection('playerKey'),
+                cascade='all, delete-orphan'
             ),
         },
     )

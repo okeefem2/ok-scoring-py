@@ -32,23 +32,26 @@ def can_add_player_round(scoreHistory, rules, playerKey: str, score: int) -> boo
 
 
 def create_game(description, players: [Player] = None, rules: GameRules = None) -> Game:
-    if validate_players(rules, players):
+    if validate_players(rules=rules, players=players):
         if description is None:
             raise DescriptionRequired('Description required to create game')
 
         game_key = unique_id()
         date = int(time.time() * 1000)
-        game = Game(
-            key=game_key,
-            date=date,
-            description=description,
-            rules=rules
+
+        score_history = build_score_history(
+            player_keys=map(lambda p: p.key, players),
+            game_key=game_key,
+            starting_score=rules.startingScore if rules is not None else 0,
+            scores=[]
         )
 
-        game.scoreHistory = build_score_history(
-            players,
-            game_key,
-            rules.startingScore if rules is not None else 0
+        game = Game(
+            key=game_key,
+            description=description,
+            date=date,
+            rules=rules,
+            scoreHistory=score_history
         )
-        game.scores = set()
+
         return game

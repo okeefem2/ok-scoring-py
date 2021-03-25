@@ -7,4 +7,4 @@ class PlayerScoreHistory:
     scores: list[int]
     playerKey: str
     gameKey: str
-    key: str = None
+    key: str
