@@ -3,7 +3,8 @@ import time
 from ok_scoring.model.game import Game
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
-from ok_scoring.repository.helpers import unique_id
+from ok_scoring.repository.abstract_repository import AbstractRepository
+from ok_scoring.repository.helpers import unique_id, now
 
 # Create a builder function
 from ok_scoring.service.game_rules_service import validate_rounds, validate_score, validate_players
@@ -31,13 +32,22 @@ def can_add_player_round(scoreHistory, rules, playerKey: str, score: int) -> boo
            and validate_score(rules, playerScoreHistory.currentScore, score)
 
 
-def create_game(description, players: [Player] = None, rules: GameRules = None) -> Game:
+def create_game(repo: AbstractRepository, session, description, players: [Player] = None, rules: GameRules = None) -> Game:
+    game = build_new_game(description=description, players=players, rules=rules)
+    # Save game to DB
+    repo.add(game)
+    session.commit()
+
+    return game
+
+
+def build_new_game(description, players: [Player] = None, rules: GameRules = None) -> Game:
     if validate_players(rules=rules, players=players):
         if description is None:
             raise DescriptionRequired('Description required to create game')
 
         game_key = unique_id()
-        date = int(time.time() * 1000)
+        date = now()
 
         score_history = build_score_history(
             player_keys=map(lambda p: p.key, players),

@@ -25,11 +25,20 @@ def test_api_returns_game():
     api_url = get_api_url()
 
     response = requests.post(f'{api_url}/game', json=data)
-    print('response!', response.json())
+    print('post response!', response.json())
 
     assert response.status_code == 201
     game = response.json()['game']
     assert game is not None
-    assert game['key'] is not None
+    game_key = game['key']
+    assert game_key is not None
 
     # Next test fetching the game and checking equality to ensure persistence
+
+    response = requests.get(f'{api_url}/game/{game_key}')
+    # print('get response!', response.json())
+
+    assert response.status_code == 200
+    # game = response.json()['game']
+    # assert game is not None
+    # assert game['key'] is not None

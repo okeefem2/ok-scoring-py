@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from ok_scoring.repository.game_repository import GameRepository
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -21,10 +22,30 @@ def home():
 @app.route('/game', methods=['POST'])
 def create_game_endpoint():
     try:
+        session = get_session()
+        repo = GameRepository(session)
         players = create_players(request.json['players'])
         rules = create_game_rules(request.json['rules'])
-        game = create_game(description=request.json['description'], players=players, rules=rules)
+        game = create_game(repo=repo,
+                           session=session,
+                           description=request.json['description'],
+                           players=players,
+                           rules=rules
+                           )
         return {'game': game}, 201
+    except BaseException as e:
+        return {'error': "{0}".format(e)}, 500
+
+
+@app.route('/game/<uuid:game_key>', methods=['GET'])
+def fetch_game_endpoint(game_key):
+    try:
+        session = get_session()
+        repo = GameRepository(session)
+        game = repo.get(str(game_key))
+        if game is None:
+            return 404
+        return {'game': game}, 200
     except BaseException as e:
         return {'error': "{0}".format(e)}, 500
 
