@@ -1,25 +1,26 @@
 
 from ok_scoring.model.game import Game
+from ok_scoring.model.player import Player
 from ok_scoring.repository.abstract_repository import AbstractRepository
 
 
-class GameRepository(AbstractRepository):
+class PlayerRepository(AbstractRepository):
     def __init__(self, session):
         self.session = session
 
-    def add(self, game):
-        self.session.add(game)
+    def add(self, player):
+        self.session.add(player)
 
     def get(self, key):
-        return self.session.query(Game).filter_by(key=key).one()
+        return self.session.query(Player).filter_by(key=key).one()
 
     def list(self):
-        return self.session.query(Game).all()
+        return self.session.query(Player).all()
 
     def delete(self, key):
-        game = self.get(key)
-        if game is not None:
-            self.session.delete(game)
+        player = self.get(key)
+        if player is not None:
+            self.session.delete(player)
         else:
             return None
 

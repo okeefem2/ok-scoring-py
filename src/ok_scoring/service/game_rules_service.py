@@ -3,6 +3,7 @@ from math import inf
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
+from ok_scoring.repository.abstract_repository import AbstractRepository
 from ok_scoring.repository.helpers import unique_id
 
 
@@ -36,8 +37,15 @@ class ScoreSignInvalid(Exception):
 
 # Pre game ######
 
+def create_game_rules(repo: AbstractRepository, session, rules_dict: dict) -> GameRules:
+    rules = build_new_game_rules(rules_dict)
+    repo.add(rules)
+    session.commit()
+    return rules
+
+
 # TODO validate game rules properties
-def create_game_rules(rules_dict: dict) -> GameRules:
+def build_new_game_rules(rules_dict: dict) -> GameRules:
     rules = GameRules(key=unique_id())
     for key in rules_dict:
         if hasattr(rules, key):

@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from ok_scoring.repository.game_repository import GameRepository
+from ok_scoring.repository.game_rules_repository import GameRulesRepository
+from ok_scoring.repository.player_repository import PlayerRepository
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -23,10 +25,12 @@ def home():
 def create_game_endpoint():
     try:
         session = get_session()
-        repo = GameRepository(session)
-        players = create_players(request.json['players'])
-        rules = create_game_rules(request.json['rules'])
-        game = create_game(repo=repo,
+        game_repo = GameRepository(session)
+        players_repo = PlayerRepository(session)
+        rules_repo = GameRulesRepository(session)
+        players = create_players(players_repo, session, request.json['players'])
+        rules = create_game_rules(rules_repo, session, request.json['rules'])
+        game = create_game(repo=game_repo,
                            session=session,
                            description=request.json['description'],
                            players=players,

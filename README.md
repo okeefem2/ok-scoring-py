@@ -25,5 +25,13 @@ use docker compose to build the volume, images and containers needed to run and 
 
 ### pytest
 
+to run e2e/integration tests run `pytest`
 
+
+### Alembic migrations
+
+`alembic revision --autogenerate -m "Some message"`
+
+The trick is to make sure that the mapper code is run before the alembic config code is via imports
+if this is not the case, then the auto migrations will not pick up the data from the mappers
 
