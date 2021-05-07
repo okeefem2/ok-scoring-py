@@ -12,7 +12,10 @@ from ok_scoring.service.game_service import create_game
 from ok_scoring.service.player_service import create_players
 
 orm.start_mappers()
-get_session = sessionmaker(bind=create_engine(ok_scoring_config.get_postgres_uri()))
+get_session = sessionmaker(
+    bind=create_engine(ok_scoring_config.get_postgres_uri()),
+    expire_on_commit=False
+)
 app = Flask(__name__)
 
 
@@ -52,6 +55,3 @@ def fetch_game_endpoint(game_key):
         return {'game': game}, 200
     except BaseException as e:
         return {'error': "{0}".format(e)}, 500
-
-
-

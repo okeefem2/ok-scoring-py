@@ -37,4 +37,5 @@ def build_player_score_history(player_key, game_key, starting_score=0, scores=No
 
 
 def build_score_history(player_keys, game_key, starting_score=0, scores=None) -> dict[str, PlayerScoreHistory]:
-    return {key: build_player_score_history(key, game_key, starting_score, scores) for key in player_keys}
+    return list(map(lambda key: build_player_score_history(key, game_key, starting_score, scores), player_keys))
+    # return {key: build_player_score_history(key, game_key, starting_score, scores) for key in player_keys}

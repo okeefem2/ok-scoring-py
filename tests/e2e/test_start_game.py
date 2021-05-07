@@ -32,13 +32,16 @@ def test_api_returns_game():
     assert game is not None
     game_key = game['key']
     assert game_key is not None
+    assert game['rules'] is not None
+    assert len(game['scoreHistory']) == 4
 
     # Next test fetching the game and checking equality to ensure persistence
 
     response = requests.get(f'{api_url}/game/{game_key}')
-    # print('get response!', response.json())
 
     assert response.status_code == 200
-    # game = response.json()['game']
-    # assert game is not None
-    # assert game['key'] is not None
+    game = response.json()['game']
+    assert game is not None
+    assert game['key'] is not None
+    assert game['rules'] is not None
+    assert len(game['scoreHistory']) == 4

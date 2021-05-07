@@ -10,7 +10,7 @@ from ok_scoring.model.game import Game
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
-from sqlalchemy.orm.collections import attribute_mapped_collection
+from sqlalchemy.orm.collections import attribute_mapped_collection, mapped_collection
 
 
 def start_mappers():
@@ -34,7 +34,7 @@ def start_mappers():
             ),
             'scoreHistory': relationship(
                 player_score_history_mapper,
-                collection_class=attribute_mapped_collection('playerKey'),
+                # collection_class=mapped_collection(lambda p: str(p.currentScore)),
                 cascade='all, delete-orphan'
             ),
         },
