@@ -3,44 +3,44 @@ from math import inf
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
+from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.abstract_repository import AbstractRepository
 from ok_scoring.repository.helpers import unique_id
 
 
-class ExceededMaxPlayers(Exception):
+class ExceededMaxPlayers(ValidationError):
     pass
 
 
-class MinPlayersNotMet(Exception):
+class MinPlayersNotMet(ValidationError):
     pass
 
 
-class PlayerAlreadyExists(Exception):
+class PlayerAlreadyExists(ValidationError):
     pass
 
 
-class ExceededRounds(Exception):
+class ExceededRounds(ValidationError):
     pass
 
 
-class ScoreBusts(Exception):
+class ScoreBusts(ValidationError):
     pass
 
 
-class ScoreNotInSet(Exception):
+class ScoreNotInSet(ValidationError):
     pass
 
 
-class ScoreSignInvalid(Exception):
+class ScoreSignInvalid(ValidationError):
     pass
 
 
 # Pre game ######
 
-def create_game_rules(repo: AbstractRepository, session, rules_dict: dict) -> GameRules:
+def create_game_rules(repo: AbstractRepository, rules_dict: dict) -> GameRules:
     rules = build_new_game_rules(rules_dict)
     repo.add(rules)
-    session.commit()
     return rules
 
 
@@ -63,10 +63,18 @@ def validate_players(rules: GameRules, players: [Player]):
 
 def validate_player(rules: GameRules, players: [Player], player: Player):
     if rules.maxPlayers is not None and rules.maxPlayers < len(players) + 1:
-        raise ExceededMaxPlayers(f'Max number of players already met {rules.maxPlayers}')
+        raise ExceededMaxPlayers(
+            propertyPath='game.players',
+            errorType='invalid',
+            errorMessage=f'Max number of players already met {rules.maxPlayers}'
+        )
     playerAlreadyExists = next((True for p in players if p == player), False)
     if playerAlreadyExists:
-        raise PlayerAlreadyExists(f'Player with key {player.key} already exists')
+        raise PlayerAlreadyExists(
+            propertyPath=f'game.players[{player.key}]',
+            errorType='duplicate',
+            errorMessage=f'Player with key {player.key} already exists'
+        )
     return True
 
 
@@ -88,17 +96,32 @@ def build_player_score_history(rules: GameRules, players: [Player], gameKey: str
 
 def validate_rounds(rules: GameRules, rounds):
     if rules.rounds is not None and rounds + 1 > rules.rounds:
-        raise ExceededRounds(f'Max number of rounds already met {rules.rounds}')
+        raise ExceededRounds(
+            propertyPath='game.scoreHistory', # TODO key for the scoreHistory
+            errorType='invalid',
+            errorMessage=f'Max number of rounds already met {rules.rounds}'
+        )
     return True
 
 
 def validate_score(rules: GameRules, current_score, round_score):
     if rules.setScores and round_score not in rules.setScores:
-        raise ScoreNotInSet(f'{round_score} is not a valid score')
+        raise ScoreNotInSet(
+            propertyPath='game.scoreHistory',  # TODO key for the scoreHistory
+            errorType='invalid',
+            errorMessage=f'{round_score} is not a valid score'
+        )
     if rules.canBust and rules.highScoreWins and current_score + round_score > rules.winningScore:
-        raise ScoreBusts(f'Score cannot exceed {rules.winningScore}')
+        raise ScoreBusts(
+            propertyPath='game.scoreHistory',  # TODO key for the scoreHistory
+            errorType='invalid',
+            errorMessage=f'Score cannot exceed {rules.winningScore}'
+        )
     if rules.canBust and not rules.highScoreWins and current_score + round_score < rules.winningScore:
-        raise ScoreBusts(f'Score cannot be lower than {rules.winningScore}')
+        raise ScoreBusts(
+            propertyPath='game.scoreHistory',  # TODO key for the scoreHistory
+            errorType='invalid',
+            errorMessage='Score cannot be lower than {rules.winningScore}')
 
     return True
 

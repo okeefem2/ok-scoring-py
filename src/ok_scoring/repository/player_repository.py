@@ -14,6 +14,9 @@ class PlayerRepository(AbstractRepository):
     def get(self, key):
         return self.session.query(Player).filter_by(key=key).one()
 
+    def get_by_name(self, name):
+        return self.session.query(Player).filter_by(name=name).one()
+
     def list(self):
         return self.session.query(Player).all()
 

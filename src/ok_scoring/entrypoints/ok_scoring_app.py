@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
+from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.game_repository import GameRepository
 from ok_scoring.repository.game_rules_repository import GameRulesRepository
 from ok_scoring.repository.player_repository import PlayerRepository
@@ -14,7 +15,6 @@ from ok_scoring.service.player_service import create_players
 orm.start_mappers()
 get_session = sessionmaker(
     bind=create_engine(ok_scoring_config.get_postgres_uri()),
-    expire_on_commit=False
 )
 app = Flask(__name__)
 
@@ -31,16 +31,19 @@ def create_game_endpoint():
         game_repo = GameRepository(session)
         players_repo = PlayerRepository(session)
         rules_repo = GameRulesRepository(session)
-        players = create_players(players_repo, session, request.json['players'])
-        rules = create_game_rules(rules_repo, session, request.json['rules'])
+        players = create_players(players_repo, request.json.get('players'))
+        rules = create_game_rules(rules_repo, request.json.get('rules'))
         game = create_game(repo=game_repo,
-                           session=session,
-                           description=request.json['description'],
+                           description=request.json.get('description'),
                            players=players,
                            rules=rules
                            )
+        session.commit()
         return {'game': game}, 201
-    except BaseException as e:
+    except ValidationError as e:
+        return {'error': e.errors}, 400
+    except Exception as e:
+        print(e)
         return {'error': "{0}".format(e)}, 500
 
 

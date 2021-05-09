@@ -45,3 +45,34 @@ def test_api_returns_game():
     assert game['key'] is not None
     assert game['rules'] is not None
     assert len(game['scoreHistory']) == 4
+
+
+@pytest.mark.usefixtures('restart_api')
+def test_400_for_game_with_no_description():
+    players = [
+        'Meredith',
+        'Maggie',
+        'Amelia',
+        'Lexie'
+    ]
+    rules = {
+        'winningScore': 100
+    }
+
+    data = {
+        'rules': rules,
+        'players': players
+    }
+
+    api_url = get_api_url()
+
+    response = requests.post(f'{api_url}/game', json=data)
+    print('post response!', response.json())
+
+    assert response.status_code == 400
+    error = response.json()['error']
+    assert error is not None
+    assert error['path'] == 'game.description'
+
+
+## TODO test no duplicate players

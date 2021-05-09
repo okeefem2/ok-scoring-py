@@ -3,6 +3,7 @@ import time
 from ok_scoring.model.game import Game
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
+from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.abstract_repository import AbstractRepository
 from ok_scoring.repository.helpers import unique_id, now
 
@@ -11,7 +12,7 @@ from ok_scoring.service.game_rules_service import validate_rounds, validate_scor
 from ok_scoring.service.player_score_history_service import set_round_score, build_score_history
 
 
-class DescriptionRequired(Exception):
+class DescriptionRequired(ValidationError):
     pass
 
 
@@ -32,11 +33,10 @@ def can_add_player_round(scoreHistory, rules, playerKey: str, score: int) -> boo
            and validate_score(rules, playerScoreHistory.currentScore, score)
 
 
-def create_game(repo: AbstractRepository, session, description, players: [Player] = None, rules: GameRules = None) -> Game:
+def create_game(repo: AbstractRepository, description, players: [Player] = None, rules: GameRules = None) -> Game:
     game = build_new_game(description=description, players=players, rules=rules)
     # Save game to DB
     repo.add(game)
-    session.commit()
 
     return game
 
@@ -44,7 +44,10 @@ def create_game(repo: AbstractRepository, session, description, players: [Player
 def build_new_game(description, players: [Player] = None, rules: GameRules = None) -> Game:
     if validate_players(rules=rules, players=players):
         if description is None:
-            raise DescriptionRequired('Description required to create game')
+            raise DescriptionRequired(
+                propertyPath='game.description',
+                errorType='required',
+                errorMessage='Description required to create game')
 
         game_key = unique_id()
         date = now()
