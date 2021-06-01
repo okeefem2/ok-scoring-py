@@ -11,7 +11,8 @@ class TestSetRoundScore(unittest.TestCase):
             scores=[1, 3, -2],
             currentScore=1,
             playerKey='1',
-            gameKey='1'
+            gameKey='1',
+            order=0
         )
         set_round_score(player_score_history_one, 6, 3)
         assert player_score_history_one.currentScore == 8
@@ -25,7 +26,8 @@ class TestSetRoundScore(unittest.TestCase):
             scores=[1, 3, -2],
             currentScore=1,
             playerKey='1',
-            gameKey='1'
+            gameKey='1',
+            order=0
         )
         set_round_score(player_score_history_one, 6, 5)
         assert player_score_history_one.currentScore == 8
@@ -37,7 +39,8 @@ class TestSetRoundScore(unittest.TestCase):
             scores=[1, 3, -2],
             currentScore=1,
             playerKey='1',
-            gameKey='1'
+            gameKey='1',
+            order=0
         )
         set_round_score(player_score_history_one, 6, 3)
         assert player_score_history_one.currentScore == 8

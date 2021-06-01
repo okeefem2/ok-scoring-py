@@ -47,9 +47,10 @@ def create_game_rules(repo: AbstractRepository, rules_dict: dict) -> GameRules:
 # TODO validate game rules properties
 def build_new_game_rules(rules_dict: dict) -> GameRules:
     rules = GameRules(key=unique_id())
-    for key in rules_dict:
-        if hasattr(rules, key):
-            setattr(rules, key, rules_dict[key])
+    if type(rules_dict) is dict:
+        for key in rules_dict:
+            if hasattr(rules, key):
+                setattr(rules, key, rules_dict[key])
     return rules
 
 
@@ -57,7 +58,11 @@ def validate_players(rules: GameRules, players: [Player]):
     if rules is not None \
             and rules.minPlayers is not None \
             and rules.minPlayers > len(players):
-        raise MinPlayersNotMet
+        raise MinPlayersNotMet(
+            propertyPath=f'game.players',
+            errorType='minLength',
+            errorMessage=f'Minimum number of players not met {rules.minPlayers}'
+        )
     return True
 
 
@@ -76,19 +81,6 @@ def validate_player(rules: GameRules, players: [Player], player: Player):
             errorMessage=f'Player with key {player.key} already exists'
         )
     return True
-
-
-def build_player_score_history(rules: GameRules, players: [Player], gameKey: str) -> {str, PlayerScoreHistory}:
-    playerScoreHistory = {}
-    startingScore = rules.startingScore if rules.startingScore else 0
-    for player in players:
-        playerScoreHistory[player.key] = PlayerScoreHistory(
-            currentScore=startingScore,
-            scores=[],
-            playerKey=player.key,
-            gameKey=gameKey
-        )
-    return playerScoreHistory
 
 
 # During game #####

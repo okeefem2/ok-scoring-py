@@ -1,6 +1,5 @@
-
-from ok_scoring.model.game import Game
 from ok_scoring.model.player import Player
+from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.repository.abstract_repository import AbstractRepository
 
 
@@ -16,6 +15,12 @@ class PlayerRepository(AbstractRepository):
 
     def get_by_name(self, name):
         return self.session.query(Player).filter_by(name=name).one()
+
+    def get_by_game_key(self, game_key):
+        results = self.session.query(Player).join(PlayerScoreHistory)\
+            .filter_by(gameKey=game_key).all()
+        print('results', results)
+        return results
 
     def list(self):
         return self.session.query(Player).all()

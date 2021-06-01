@@ -3,6 +3,7 @@ import time
 from ok_scoring.model.game import Game
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
+from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.abstract_repository import AbstractRepository
 from ok_scoring.repository.helpers import unique_id, now
@@ -16,21 +17,24 @@ class DescriptionRequired(ValidationError):
     pass
 
 
-def add_player_round(game, playerKey: str, score: int, round_index: int):
-    if can_add_player_round(game.scoreHistory, game.rules, playerKey, score):
-        set_round_score(game.scoreHistory[playerKey], score, round_index)
+def save_round_score(repo: AbstractRepository, scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
+    scoreHistory = validate_and_set_round_score(scoreHistory, rules, score, round_index)
+    repo.update(scoreHistory)
+    return scoreHistory
 
 
-def can_add_player_round(scoreHistory, rules, playerKey: str, score: int) -> bool:
-    # Maybe could have a rule to add the player if they do not exist
-    if playerKey not in scoreHistory:
-        return False
+def validate_and_set_round_score(scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
+    if can_add_player_round(scoreHistory=scoreHistory, rules=rules, score=score):
+        scoreHistory = set_round_score(scoreHistory, score, round_index)
+    return scoreHistory
+
+
+def can_add_player_round(scoreHistory: PlayerScoreHistory, rules, score: int) -> bool:
     if rules is None:  # NO RULES!!
         return True
 
-    playerScoreHistory = scoreHistory[playerKey]
-    return validate_rounds(rules, len(playerScoreHistory.scores)) \
-           and validate_score(rules, playerScoreHistory.currentScore, score)
+    return validate_rounds(rules, len(scoreHistory.scores)) \
+           and validate_score(rules, scoreHistory.currentScore, score)
 
 
 def create_game(repo: AbstractRepository, description, players: [Player] = None, rules: GameRules = None) -> Game:
@@ -41,7 +45,7 @@ def create_game(repo: AbstractRepository, description, players: [Player] = None,
     return game
 
 
-def build_new_game(description, players: [Player] = None, rules: GameRules = None) -> Game:
+def build_new_game(description: str, players: [Player] = None, rules: GameRules = None) -> Game:
     if validate_players(rules=rules, players=players):
         if description is None:
             raise DescriptionRequired(
@@ -53,7 +57,7 @@ def build_new_game(description, players: [Player] = None, rules: GameRules = Non
         date = now()
 
         score_history = build_score_history(
-            player_keys=map(lambda p: p.key, players),
+            player_keys=map(lambda p: p.key, players) if players is not None else [],
             game_key=game_key,
             starting_score=rules.startingScore if rules is not None else 0,
             scores=[]

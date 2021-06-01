@@ -24,8 +24,7 @@ def test_api_returns_game():
 
     api_url = get_api_url()
 
-    response = requests.post(f'{api_url}/game', json=data)
-    print('post response!', response.json())
+    response = requests.post(f'{api_url}/games', json=data)
 
     assert response.status_code == 201
     game = response.json()['game']
@@ -37,7 +36,7 @@ def test_api_returns_game():
 
     # Next test fetching the game and checking equality to ensure persistence
 
-    response = requests.get(f'{api_url}/game/{game_key}')
+    response = requests.get(f'{api_url}/games/{game_key}')
 
     assert response.status_code == 200
     game = response.json()['game']
@@ -66,8 +65,7 @@ def test_400_for_game_with_no_description():
 
     api_url = get_api_url()
 
-    response = requests.post(f'{api_url}/game', json=data)
-    print('post response!', response.json())
+    response = requests.post(f'{api_url}/games', json=data)
 
     assert response.status_code == 400
     error = response.json()['error']
@@ -75,4 +73,31 @@ def test_400_for_game_with_no_description():
     assert error['path'] == 'game.description'
 
 
-## TODO test no duplicate players
+@pytest.mark.usefixtures('restart_api')
+def test_players_not_duplicated_in_db():
+    players = [
+        'Meredith',
+        'Maggie',
+        'Amelia',
+        'Lexie',
+        'Meredith',
+        'Maggie',
+        'Amelia',
+        'Lexie'
+    ]
+
+    data = {
+        'description': 'Cribbage',
+        'players': players
+    }
+
+    api_url = get_api_url()
+
+    response = requests.post(f'{api_url}/games', json=data)
+    assert response.status_code == 201
+    game = response.json()['game']
+    game_key = game['key']
+    players_response = requests.get(f'{api_url}/games/{game_key}/players')
+    assert players_response.status_code == 200
+    players = players_response.json()['players']
+    assert len(players) == 4

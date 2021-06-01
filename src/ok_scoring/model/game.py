@@ -14,6 +14,7 @@ class Game:
 
     duration: Optional[int] = None
     winningPlayerKey: Optional[str] = None
+    activePlayerKey: Optional[str] = None
 
     # TODO this will need to be set after loading or something
     # scoreHistory: Optional[dict[str, PlayerScoreHistory]] = None

@@ -11,13 +11,11 @@ class TestCreatePlayer(unittest.TestCase):
         assert player.favorite is False
 
 
-class TestCreatePlayers(unittest.TestCase):
-    def test_new_players(self):
-        players = create_players(['Roland', 'Eddie', 'Susannah', 'Jake', 'Oy'])
-        assert len(players) == 5
-
-    # TODO should test existing players with mock repo
-
+# TODO integration test
+# class TestCreatePlayers(unittest.TestCase):
+#     def test_new_players(self):
+#         players = create_players(['Roland', 'Eddie', 'Susannah', 'Jake', 'Oy'])
+#         assert len(players) == 5
 
 if __name__ == '__main__':
     unittest.main()

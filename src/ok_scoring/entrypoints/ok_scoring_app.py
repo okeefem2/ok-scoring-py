@@ -3,6 +3,8 @@ from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.game_repository import GameRepository
 from ok_scoring.repository.game_rules_repository import GameRulesRepository
 from ok_scoring.repository.player_repository import PlayerRepository
+from ok_scoring.repository.player_score_history_repository import PlayerScoreHistoryRepository
+from ok_scoring.service.player_score_history_service import set_round_score
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -24,7 +26,7 @@ def home():
     return 'Hello OK Scoring', 201
 
 
-@app.route('/game', methods=['POST'])
+@app.route('/games', methods=['POST'])
 def create_game_endpoint():
     try:
         session = get_session()
@@ -47,7 +49,7 @@ def create_game_endpoint():
         return {'error': "{0}".format(e)}, 500
 
 
-@app.route('/game/<uuid:game_key>', methods=['GET'])
+@app.route('/games/<uuid:game_key>', methods=['GET'])
 def fetch_game_endpoint(game_key):
     try:
         session = get_session()
@@ -57,4 +59,35 @@ def fetch_game_endpoint(game_key):
             return 404
         return {'game': game}, 200
     except BaseException as e:
+        return {'error': "{0}".format(e)}, 500
+
+
+@app.route('/games/<uuid:game_key>/players', methods=['GET'])
+def fetch_players_for_game(game_key):
+    try:
+        session = get_session()
+        repo = PlayerRepository(session)
+        print('fetching players!')
+        players = repo.get_by_game_key(str(game_key))
+        if players is None:
+            return 404
+        return {'players': players}, 200
+    except BaseException as e:
+        print(e)
+        return {'error': "{0}".format(e)}, 500
+
+
+@app.route('/games/<uuid:game_key>/scores/<uuid:player_key>', methods=['POST'])
+def set_player_round_score(game_key, player_key):
+    try:
+        session = get_session()
+        repo = PlayerScoreHistoryRepository(session)
+        print('fetching players!')
+        score = int(request.json.get('score'))
+        score_index = int(request.json.get('score_index'))
+        playerScoreHistory = repo.get_player_score_by_game_key(player_key=str(player_key), game_key=str(game_key))
+        playerScoreHistory = set_round_score(playerScoreHistory, score, score_index)
+        return {'playerScoreHistory': playerScoreHistory}, 200
+    except BaseException as e:
+        print(e)
         return {'error': "{0}".format(e)}, 500

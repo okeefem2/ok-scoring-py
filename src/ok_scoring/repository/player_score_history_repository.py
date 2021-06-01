@@ -13,6 +13,11 @@ class PlayerScoreHistoryRepository(AbstractRepository):
     def get(self, key):
         return self.session.query(PlayerScoreHistory).filter_by(key=key).one()
 
+    def get_player_score_by_game_key(self, player_key, game_key):
+        results = self.session.query(PlayerScoreHistory)\
+            .filter_by(gameKey=game_key, playerKey=player_key).all()
+        return results
+
     def list(self):
         return self.session.query(PlayerScoreHistory).all()
 

@@ -3,6 +3,7 @@ from ok_scoring.repository.helpers import unique_id
 
 
 def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index):
+    # TODO immutable?
     rounds = len(scoreHistory.scores)
     if round_index >= rounds:
         # default round score though...
@@ -14,6 +15,7 @@ def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index):
         scoreHistory.scores = fill_missing_rounds(scoreHistory.scores, round_index + 1, rounds)
     scoreHistory.scores[round_index] = score
     scoreHistory.currentScore = calculate_current_score(scoreHistory.scores)
+    return scoreHistory
 
 
 def fill_missing_rounds(scores, ending_rounds, current_rounds):
@@ -24,7 +26,7 @@ def calculate_current_score(scores):
     return sum(scores)
 
 
-def build_player_score_history(player_key, game_key, starting_score=0, scores=None) -> PlayerScoreHistory:
+def build_player_score_history(player_key, game_key, order, starting_score=0, scores=None, ) -> PlayerScoreHistory:
     scores = scores if scores is not None else []
 
     return PlayerScoreHistory(
@@ -32,10 +34,11 @@ def build_player_score_history(player_key, game_key, starting_score=0, scores=No
         gameKey=game_key,
         playerKey=player_key,
         currentScore=starting_score,
-        scores=scores
+        scores=scores,
+        order=order
     )
 
 
 def build_score_history(player_keys, game_key, starting_score=0, scores=None) -> list[PlayerScoreHistory]:
-    return list(map(lambda key: build_player_score_history(key, game_key, starting_score, scores), player_keys))
+    return [build_player_score_history(key, game_key, i, starting_score, scores) for i, key in enumerate(player_keys)]
     # return {key: build_player_score_history(key, game_key, starting_score, scores) for key in player_keys}
