@@ -9,7 +9,7 @@ from ok_scoring.repository.abstract_repository import AbstractRepository
 from ok_scoring.repository.helpers import unique_id, now
 
 # Create a builder function
-from ok_scoring.service.game_rules_service import validate_rounds, validate_score, validate_players
+from ok_scoring.service.game_rules_service import validate_rounds, validate_score, validate_players, determine_winner
 from ok_scoring.service.player_score_history_service import set_round_score, build_score_history
 
 
@@ -17,9 +17,13 @@ class DescriptionRequired(ValidationError):
     pass
 
 
-def save_round_score(repo: AbstractRepository, scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
+def update_winner(game):
+    game.winningPlayerKey = determine_winner(scoreHistory=game.scoreHistory, rules=game.rules)
+    return game
+
+
+def save_round_score(scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
     scoreHistory = validate_and_set_round_score(scoreHistory, rules, score, round_index)
-    repo.update(scoreHistory)
     return scoreHistory
 
 

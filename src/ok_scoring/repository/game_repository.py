@@ -11,7 +11,7 @@ class GameRepository(AbstractRepository):
         self.session.add(game)
 
     def get(self, key):
-        return self.session.query(Game).filter_by(key=key).one()
+        return self.session.query(Game).filter_by(key=key).first()
 
     def list(self):
         return self.session.query(Game).all()

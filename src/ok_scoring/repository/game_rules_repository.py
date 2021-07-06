@@ -11,7 +11,7 @@ class GameRulesRepository(AbstractRepository):
         self.session.add(batch)
 
     def get(self, key):
-        return self.session.query(GameRules).filter_by(key=key).one()
+        return self.session.query(GameRules).filter_by(key=key).first()
 
     def list(self):
         return self.session.query(GameRules).all()

@@ -10,10 +10,10 @@ class GameRules:
     # One big thing to think about will be editing rules though...
     # I think it would probably be better to have a rules template or something, and
     # Probably an optional foreign key on this table
-    startingScore: Optional[int] = None
+    startingScore: Optional[int] = 0
     # Used to set default sign in the UI
-    scoreIncreasesByDefault: Optional[bool] = None
-    defaultScoreStep: Optional[int] = None
+    scoreIncreasesByDefault: Optional[bool] = True
+    defaultScoreStep: Optional[int] = 0
 
     rounds: Optional[int] = None
     minRoundsToWin: Optional[int] = None
@@ -28,9 +28,10 @@ class GameRules:
     winningScore: Optional[int] = None
     canBust: Optional[int] = None
 
-    highScoreWins: Optional[bool] = None
+    highScoreWins: Optional[bool] = True
 
     # a Set of possible scores
     setScores: Optional[set[int]] = None
 
     # TODO a set of required score conditions - think yahtzee
+    # TODO add rules for teams

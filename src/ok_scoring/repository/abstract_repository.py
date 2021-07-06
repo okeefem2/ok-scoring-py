@@ -17,7 +17,3 @@ class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def delete(self, key):
         raise NotImplementedError
-
-    @abc.abstractmethod
-    def update(self, entity):
-        raise NotImplementedError

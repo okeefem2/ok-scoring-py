@@ -10,9 +10,10 @@ from sqlalchemy.orm import sessionmaker
 
 from ok_scoring import ok_scoring_config
 from ok_scoring.db import orm
-from ok_scoring.service.game_rules_service import create_game_rules
-from ok_scoring.service.game_service import create_game
+from ok_scoring.service.game_rules_service import create_game_rules, determine_winner
+from ok_scoring.service.game_service import create_game, save_round_score, update_winner
 from ok_scoring.service.player_service import create_players
+from uuid import uuid4, UUID
 
 orm.start_mappers()
 get_session = sessionmaker(
@@ -41,7 +42,7 @@ def create_game_endpoint():
                            rules=rules
                            )
         session.commit()
-        return {'game': game}, 201
+        return {'game': game, 'players': players}, 201
     except ValidationError as e:
         return {'error': e.errors}, 400
     except Exception as e:
@@ -77,17 +78,31 @@ def fetch_players_for_game(game_key):
         return {'error': "{0}".format(e)}, 500
 
 
+# TODO look into a decorator middleware thing for this...
+# basically to say "recalculate winning player after this is done"
 @app.route('/games/<uuid:game_key>/scores/<uuid:player_key>', methods=['POST'])
 def set_player_round_score(game_key, player_key):
     try:
         session = get_session()
-        repo = PlayerScoreHistoryRepository(session)
-        print('fetching players!')
+        game_repo = GameRepository(session)
+        player_score_history_repo = PlayerScoreHistoryRepository(session)
+
         score = int(request.json.get('score'))
         score_index = int(request.json.get('score_index'))
-        playerScoreHistory = repo.get_player_score_by_game_key(player_key=str(player_key), game_key=str(game_key))
-        playerScoreHistory = set_round_score(playerScoreHistory, score, score_index)
-        return {'playerScoreHistory': playerScoreHistory}, 200
+        game = game_repo.get(str(game_key))
+        print('game score history', game.scoreHistory)
+
+        player_score_history = next((score for score in game.scoreHistory if str(score.playerKey) == str(player_key)), None)
+        print('player_score_history to update', player_score_history)
+
+        player_score_history = save_round_score(player_score_history, game.rules, score, score_index)
+        print('updated player_score_history', player_score_history)
+
+        game.scoreHistory = [player_score_history if str(s.playerKey) == str(player_key) else s for s in game.scoreHistory]
+        update_winner(game)
+        session.commit()
+        return {'game': game}, 200
     except BaseException as e:
         print(e)
         return {'error': "{0}".format(e)}, 500
+

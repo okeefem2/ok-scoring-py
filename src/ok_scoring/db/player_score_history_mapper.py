@@ -8,7 +8,7 @@ player_score_history = Table(
     metadata,
     Column('key', UUID, primary_key=True),
     Column('scores', ARRAY(Integer)),
-    Column('currentScore', Integer),
+    Column('currentScore', Integer, nullable=False),
     Column('order', Integer),
     Column('playerKey', UUID, ForeignKey('player.key')),
     Column('gameKey', UUID, ForeignKey('game.key'))

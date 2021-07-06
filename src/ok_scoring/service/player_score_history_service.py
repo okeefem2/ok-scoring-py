@@ -40,5 +40,5 @@ def build_player_score_history(player_key, game_key, order, starting_score=0, sc
 
 
 def build_score_history(player_keys, game_key, starting_score=0, scores=None) -> list[PlayerScoreHistory]:
-    return [build_player_score_history(key, game_key, i, starting_score, scores) for i, key in enumerate(player_keys)]
+    return [build_player_score_history(player_key=key, game_key=game_key, order=i, starting_score=starting_score, scores=scores) for i, key in enumerate(player_keys)]
     # return {key: build_player_score_history(key, game_key, starting_score, scores) for key in player_keys}

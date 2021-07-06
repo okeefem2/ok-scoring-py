@@ -118,21 +118,28 @@ def validate_score(rules: GameRules, current_score, round_score):
     return True
 
 
-def score_beats_winner(highScoreWins, winningScore, score):
-    return score > winningScore if highScoreWins else score < winningScore
+# def score_beats_winner(highScoreWins, winningScore, score):
+#     return score > winningScore if highScoreWins else score < winningScore
 
 
-def determine_winner(rules: GameRules, scoreHistory: dict[str, PlayerScoreHistory]):
-    highScoreWins = rules.highScoreWins is True or rules.highScoreWins is None
-    winningScore = -inf if highScoreWins else inf
-    winningPlayerKey = None
-    if len(scoreHistory.keys()) > 0:
-        for playerKey, playerScores in scoreHistory.items():
-            if len(playerScores.scores) > 0 and \
-                    score_beats_winner(highScoreWins, winningScore, playerScores.currentScore):
-                winningScore = playerScores.currentScore
-                winningPlayerKey = playerKey
-    return winningPlayerKey
+def determine_winner(scoreHistory: [PlayerScoreHistory], rules: GameRules) -> str:
+    high_score_wins = rules.highScoreWins if rules is not None else True
+    default_score = rules.defaultScoreStep if rules is not None else 0
+    winning_score: PlayerScoreHistory = max(scoreHistory, key=lambda s: s.currentScore if s.currentScore is not None else default_score) if high_score_wins is True \
+        else min(scoreHistory, key=lambda s: s.currentScore if s.currentScore is not None else default_score)
+    return winning_score.playerKey
+
+# def determine_winner(rules: GameRules, scoreHistory: dict[str, PlayerScoreHistory]):
+#     highScoreWins = rules.highScoreWins is True or rules.highScoreWins is None
+#     winningScore = -inf if highScoreWins else inf
+#     winningPlayerKey = None
+#     if len(scoreHistory.keys()) > 0:
+#         for playerKey, playerScores in scoreHistory.items():
+#             if len(playerScores.scores) > 0 and \
+#                     score_beats_winner(highScoreWins, winningScore, playerScores.currentScore):
+#                 winningScore = playerScores.currentScore
+#                 winningPlayerKey = playerKey
+#     return winningPlayerKey
 
 
 # End game #####

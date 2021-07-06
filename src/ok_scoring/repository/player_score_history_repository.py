@@ -11,11 +11,11 @@ class PlayerScoreHistoryRepository(AbstractRepository):
         self.session.add(playerScoreHistory)
 
     def get(self, key):
-        return self.session.query(PlayerScoreHistory).filter_by(key=key).one()
+        return self.session.query(PlayerScoreHistory).filter_by(key=key).first()
 
-    def get_player_score_by_game_key(self, player_key, game_key):
+    def get_player_scores_by_game_key(self, player_key, game_key):
         results = self.session.query(PlayerScoreHistory)\
-            .filter_by(gameKey=game_key, playerKey=player_key).all()
+            .filter_by(gameKey=game_key, playerKey=player_key).first()
         return results
 
     def list(self):
@@ -28,5 +28,3 @@ class PlayerScoreHistoryRepository(AbstractRepository):
         else:
             return None
 
-    def update(self, playerScoreHistory):
-        return self.session.update(playerScoreHistory)

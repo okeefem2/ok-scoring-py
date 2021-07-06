@@ -11,10 +11,10 @@ class PlayerRepository(AbstractRepository):
         self.session.add(player)
 
     def get(self, key):
-        return self.session.query(Player).filter_by(key=key).one()
+        return self.session.query(Player).filter_by(key=key).first()
 
     def get_by_name(self, name):
-        return self.session.query(Player).filter_by(name=name).one()
+        return self.session.query(Player).filter_by(name=name).first()
 
     def get_by_game_key(self, game_key):
         results = self.session.query(Player).join(PlayerScoreHistory)\
