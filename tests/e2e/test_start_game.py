@@ -139,12 +139,12 @@ def test_playing_cribbage():
     scoreRounds = [
         # Geralt deals first
         {'scores': [{'playerKey': geralt_key, 'score': 11}, {'playerKey': ciri_key, 'score': 7}], 'winning': geralt_key, 'index': 0},
-        # {'scores': [{'playerKey': geralt_key, 'score': 5}, {'playerKey': ciri_key, 'score': 24}], 'winning': ciri_key, 'index': 1},
-        # {'scores': [{'playerKey': geralt_key, 'score': 15}, {'playerKey': ciri_key, 'score': 8}], 'winning': ciri_key, 'index': 2},  # G: 31, C: 39
-        # {'scores': [{'playerKey': geralt_key, 'score': 16}, {'playerKey': ciri_key, 'score': 6}], 'winning': geralt_key, 'index': 3},  # G: 47, C: 45
-        # {'scores': [{'playerKey': geralt_key, 'score': 0}, {'playerKey': ciri_key, 'score': 4}], 'winning': ciri_key, 'index': 4},  # G: 47, C: 49
-        # {'scores': [{'playerKey': geralt_key, 'score': 20}, {'playerKey': ciri_key, 'score': 14}], 'winning': geralt_key, 'index': 5},  # G: 67, C: 63
-        # {'scores': [{'playerKey': geralt_key, 'score': 10}, {'playerKey': ciri_key, 'score': 14}], 'winning': ciri_key, 'index': 5},  # Correction  G: 57, C: 63
+        {'scores': [{'playerKey': geralt_key, 'score': 5}, {'playerKey': ciri_key, 'score': 24}], 'winning': ciri_key, 'index': 1},
+        {'scores': [{'playerKey': geralt_key, 'score': 15}, {'playerKey': ciri_key, 'score': 8}], 'winning': ciri_key, 'index': 2},  # G: 31, C: 39
+        {'scores': [{'playerKey': geralt_key, 'score': 16}, {'playerKey': ciri_key, 'score': 6}], 'winning': geralt_key, 'index': 3},  # G: 47, C: 45
+        {'scores': [{'playerKey': geralt_key, 'score': 0}, {'playerKey': ciri_key, 'score': 4}], 'winning': ciri_key, 'index': 4},  # G: 47, C: 49
+        {'scores': [{'playerKey': geralt_key, 'score': 20}, {'playerKey': ciri_key, 'score': 14}], 'winning': geralt_key, 'index': 5},  # G: 67, C: 63
+        {'scores': [{'playerKey': geralt_key, 'score': 10}, {'playerKey': ciri_key, 'score': 14}], 'winning': ciri_key, 'index': 5},  # Correction  G: 57, C: 63
         # {'scores': [{'playerKey': geralt_key, 'score': 9}, {'playerKey': ciri_key, 'score': 12}], 'winning': ciri_key, 'index': 6},  # G: 66, C: 75
         # {'scores': [{'playerKey': geralt_key, 'score': 8}, {'playerKey': ciri_key, 'score': 8}], 'winning': ciri_key, 'index': 7},  # G: 74, C: 83
         # {'scores': [{'playerKey': geralt_key, 'score': 6}, {'playerKey': ciri_key, 'score': 8}], 'winning': ciri_key, 'index': 8},  # G: 82, C: 91
@@ -159,8 +159,13 @@ def test_playing_cribbage():
             player_key = score['playerKey']
             data = {'score_index': scoreRound['index'], 'score': score['score']}
             update_score_response = requests.post(f'{api_url}/games/{game_key}/scores/{player_key}', json=data)
-            # game = update_score_response.json()['game']
+            assert update_score_response.status_code == 200
+            game = update_score_response.json()['game']
+            scoreHistory = game['scoreHistory']
+            player_score_history = next((s for s in scoreHistory if s['playerKey'] == player_key), None)
+            assert player_score_history['scores'][scoreRound['index']] == score['score']
 
+        # Validate
         fetch_game_response = requests.get(f'{api_url}/games/{game_key}', json=data)
         game = fetch_game_response.json()['game']
 

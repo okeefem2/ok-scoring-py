@@ -22,11 +22,6 @@ def update_winner(game):
     return game
 
 
-def save_round_score(scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
-    scoreHistory = validate_and_set_round_score(scoreHistory, rules, score, round_index)
-    return scoreHistory
-
-
 def validate_and_set_round_score(scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
     if can_add_player_round(scoreHistory=scoreHistory, rules=rules, score=score):
         scoreHistory = set_round_score(scoreHistory, score, round_index)
