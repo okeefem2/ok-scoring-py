@@ -44,3 +44,27 @@ def build_score_history(player_keys, game_key, starting_score=0, scores=None) ->
     return [build_player_score_history(player_key=key, game_key=game_key, order=i, starting_score=starting_score, scores=scores) for i, key in enumerate(player_keys)]
     # If I ever use a dict for this structure again
     # return {key: build_player_score_history(key, game_key, starting_score, scores) for key in player_keys}
+
+
+def find_by_player_key(scoreHistory: [PlayerScoreHistory], key) -> PlayerScoreHistory:
+    return next(
+        filter(lambda playerScoreHistory: playerScoreHistory.playerKey == key, scoreHistory),
+        None
+    )
+
+
+def find_by_order_index(scoreHistory: [PlayerScoreHistory], orderIndex) -> PlayerScoreHistory:
+    return next(
+        filter(lambda playerScoreHistory: playerScoreHistory.order == orderIndex, scoreHistory),
+        None
+    )
+
+
+def is_current_round(scoreHistory: [PlayerScoreHistory], round_index):
+    score_history = max(scoreHistory, key=lambda s: len(s.scores) - 1)
+    return len(score_history.scores) - 1 == round_index
+
+
+def is_round_complete(scoreHistory: [PlayerScoreHistory], round_index):
+    return all(round_index < len(playerScoreHistory.scores) for playerScoreHistory in scoreHistory)
+

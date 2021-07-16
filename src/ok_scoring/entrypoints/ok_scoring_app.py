@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from ok_scoring import ok_scoring_config
 from ok_scoring.db import orm
 from ok_scoring.service.game_rules_service import build_new_game_rules, game_complete
-from ok_scoring.service.game_service import validate_and_set_round_score, update_winner, build_new_game
+from ok_scoring.service.game_service import validate_and_set_round_score, update_winner, build_new_game, update_dealer
 from ok_scoring.service.player_service import create_players, filter_out_existing_names
 
 orm.start_mappers()
@@ -89,6 +89,7 @@ def fetch_players_for_game(game_key):
 
 # TODO look into a decorator middleware thing for this...
 # basically to say "recalculate winning player after this is done"
+
 @app.route('/games/<uuid:game_key>/scores/<uuid:player_key>', methods=['POST'])
 def set_player_round_score(game_key, player_key):
     try:
@@ -113,6 +114,7 @@ def set_player_round_score(game_key, player_key):
 
         game.scoreHistory = [player_score_history if s.playerKey == player_key else s for s in game.scoreHistory]
         update_winner(game)
+        update_dealer(game, score_index)
         session.commit()
 
         return {'game': game}, 200

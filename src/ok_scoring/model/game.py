@@ -15,6 +15,7 @@ class Game:
     duration: Optional[int] = None
     winningPlayerKey: Optional[str] = None
     activePlayerKey: Optional[str] = None
+    dealingPlayerKey: Optional[str] = None
 
     scoreHistory: Optional[list[PlayerScoreHistory]] = None
     rules: Optional[GameRules] = None

@@ -1,7 +1,6 @@
 from ok_scoring.model.player import Player
 from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.helpers import unique_id
-from ok_scoring.repository.player_repository import PlayerRepository
 
 
 class NameRequired(ValidationError):
@@ -22,11 +21,6 @@ def create_players(names: [str]) -> [Player]:
     players = []
     for name in names:
         player = build_new_player(name)
-
-        # player = repo.get_by_name(name)
-        # if player is None:
-        #     player = build_new_player(name)
-        #     new_players.append(player)
         players.append(player)
     return players
 

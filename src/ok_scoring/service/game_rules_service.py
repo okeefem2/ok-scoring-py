@@ -1,10 +1,13 @@
 from math import inf
+from typing import Optional
 
-from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.game_rules import GameRules, DealerSettings
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.helpers import unique_id
+from ok_scoring.service.player_score_history_service import find_by_player_key, \
+    find_by_order_index
 
 
 class ExceededMaxPlayers(ValidationError):
@@ -93,7 +96,6 @@ def scores_meet_set_scores(set_scores, scores):
 
 # TODO this logic might be duplicated somewhere
 def winning_score_met(winning_score, score, can_bust, high_score_wins):
-    print('is winning score met', winning_score, score, can_bust, high_score_wins)
     if winning_score == score:
         return True
     # TODO maybe flip these names?... defaulting None to also be true is annoying
@@ -106,11 +108,10 @@ def winning_score_met(winning_score, score, can_bust, high_score_wins):
 
 def min_rounds_met(min_rounds_to_win, scores):
     return min_rounds_to_win is None \
-                or min_rounds_to_win <= len(scores)
+           or min_rounds_to_win <= len(scores)
 
 
 def game_complete(rules: GameRules, scoreHistory: [PlayerScoreHistory]):
-
     for playerScoreHistory in scoreHistory:
         # If player hasn't met the min rounds required, they can't have won
         if not min_rounds_met(rules.minRoundsToWin, playerScoreHistory.scores):
@@ -173,12 +174,23 @@ def determine_winner(scoreHistory: [PlayerScoreHistory], rules: GameRules) -> st
     for playerScore in scoreHistory:
         if len(playerScore.scores) > 0 and \
                 (
-                    winning_score is None
-                    or score_beats_winner(high_score_wins, winning_score.currentScore, playerScore.currentScore)
+                        winning_score is None
+                        or score_beats_winner(high_score_wins, winning_score.currentScore, playerScore.currentScore)
                 ):
             winning_score = playerScore
 
     return winning_score.playerKey if winning_score is not None else None
 
+
+def determine_next_dealer(scoreHistory: [PlayerScoreHistory], rules: GameRules, currentDealerKey: Optional[str]):
+    if rules.dealerSettings != DealerSettings.NewPerRound:
+        return currentDealerKey
+
+    currentDealer: PlayerScoreHistory = find_by_player_key(scoreHistory, currentDealerKey)
+    nextDealerIndex = currentDealer.order + 1 \
+        if currentDealer is not None and currentDealer.order < len(scoreHistory) - 1 \
+        else 0
+    nextDealer: PlayerScoreHistory = find_by_order_index(scoreHistory, nextDealerIndex)
+    return nextDealer.playerKey
 
 # End game #####

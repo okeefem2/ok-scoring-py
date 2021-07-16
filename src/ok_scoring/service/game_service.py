@@ -8,8 +8,10 @@ from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.helpers import unique_id, now
 
 # Create a builder function
-from ok_scoring.service.game_rules_service import validate_rounds, validate_score, validate_players, determine_winner
-from ok_scoring.service.player_score_history_service import set_round_score, build_score_history
+from ok_scoring.service.game_rules_service import validate_rounds, validate_score, validate_players, determine_winner, \
+    determine_next_dealer
+from ok_scoring.service.player_score_history_service import set_round_score, build_score_history, is_round_complete, \
+    is_current_round
 
 
 class DescriptionRequired(ValidationError):
@@ -18,6 +20,19 @@ class DescriptionRequired(ValidationError):
 
 class RoundNotValid(ValidationError):
     pass
+
+
+# TODO probably need to compare previous game state to new game state
+def update_dealer(new_game: Game, old_game: Game, round_index):
+    # TODO only update dealer if new round completes current round
+    # TODO this raises the question of if we should allow a player to have rounds way ahead of another player...
+
+    if is_current_round(new_game.scoreHistory, round_index) \
+            and is_round_complete(new_game.scoreHistory, round_index) \
+            and not is_round_complete(old_game.scoreHistory, round_index):
+        new_game.dealingPlayerKey = \
+            determine_next_dealer(new_game.scoreHistory, new_game.rules, new_game.dealingPlayerKey)
+    return new_game
 
 
 def update_winner(game):

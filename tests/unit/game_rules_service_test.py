@@ -1,12 +1,12 @@
 import unittest
 
-from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.game_rules import GameRules, DealerSettings
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.service.game_rules_service import validate_rounds, ExceededRounds, validate_score, ScoreBusts, \
     validate_player, \
     ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner, ScoreNotInSet, \
-    build_new_game_rules, game_complete, scores_meet_set_scores, winning_score_met, min_rounds_met
+    build_new_game_rules, scores_meet_set_scores, winning_score_met, min_rounds_met, determine_next_dealer
 
 
 # Pre game validations ######
@@ -200,6 +200,44 @@ class TestDetermineWinner(unittest.TestCase):
         scoreHistory = [playerOneScores, playerTwoScores]
 
         assert determine_winner(scoreHistory, rules) == '1'
+
+
+class ValidateDetermineDealer(unittest.TestCase):
+
+    def test_no_dealer_game(self):
+        rules = GameRules(key='key', dealerSettings=None)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=10, scores=[5, 5], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=3, scores=[3], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+        assert determine_next_dealer(scoreHistory, rules, None) is None
+
+    def test_no_dealer_set_in_order(self):
+        rules = GameRules(key='key', dealerSettings=DealerSettings.NewPerRound)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=0, scores=[], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=0, scores=[], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+        assert determine_next_dealer(scoreHistory, rules, None) == '1'
+
+    def test_no_dealer_set_out_of_order(self):
+        rules = GameRules(key='key', dealerSettings=DealerSettings.NewPerRound)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=0, scores=[], playerKey='1', gameKey='1', order=1)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=0, scores=[], playerKey='2', gameKey='1', order=0)
+        scoreHistory = [playerOneScores, playerTwoScores]
+        assert determine_next_dealer(scoreHistory, rules, None) == '2'
+
+    def test_next_dealer_picked(self):
+        rules = GameRules(key='key', dealerSettings=DealerSettings.NewPerRound)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=0, scores=[], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=0, scores=[], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+        assert determine_next_dealer(scoreHistory, rules, '1') == '2'
+
+    def test_next_dealer_picked_loopback(self):
+        rules = GameRules(key='key', dealerSettings=DealerSettings.NewPerRound)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=0, scores=[], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=0, scores=[], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+        assert determine_next_dealer(scoreHistory, rules, '2') == '1'
 
 
 if __name__ == '__main__':

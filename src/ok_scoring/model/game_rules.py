@@ -1,5 +1,12 @@
 from dataclasses import dataclass
 from typing import Optional
+from enum import Enum
+
+
+class DealerSettings(Enum):
+    Constant = 'constant'
+    NewPerRound = 'newPerRound'
+    Manual = 'manual'
 
 
 @dataclass()
@@ -34,6 +41,9 @@ class GameRules:
 
     # a Set of possible scores
     setScores: Optional[set[int]] = None
+
+    dealerSettings: Optional[DealerSettings] = None
+
     # TODO add boolean to check for order of setScores
 
     # TODO a set of required score conditions - think yahtzee
