@@ -168,19 +168,17 @@ def score_beats_winner(highScoreWins, winningScore, score):
 # TODO might need to consider the order and round in which the winning score was met
 def determine_winner(scoreHistory: [PlayerScoreHistory], rules: GameRules) -> str:
     high_score_wins = rules.highScoreWins if rules is not None else True
-
     winning_score = None
 
     for playerScore in scoreHistory:
-        if winning_score is None \
-                or score_beats_winner(high_score_wins, winning_score.currentScore, playerScore.currentScore):
+        if len(playerScore.scores) > 0 and \
+                (
+                    winning_score is None
+                    or score_beats_winner(high_score_wins, winning_score.currentScore, playerScore.currentScore)
+                ):
             winning_score = playerScore
 
-
-    # winning_score: PlayerScoreHistory = \
-    #     max(scoreHistory, key=lambda s: s.currentScore if s.currentScore is not None else default_score) if high_score_wins is True \
-    #     else min(scoreHistory, key=lambda s: s.currentScore if s.currentScore is not None else default_score)
-    return winning_score.playerKey
+    return winning_score.playerKey if winning_score is not None else None
 
 
 # End game #####

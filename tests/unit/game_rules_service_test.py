@@ -2,6 +2,7 @@ import unittest
 
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
+from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.service.game_rules_service import validate_rounds, ExceededRounds, validate_score, ScoreBusts, \
     validate_player, \
     ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner, ScoreNotInSet, \
@@ -166,39 +167,39 @@ class TestValidateScore(unittest.TestCase):
         rules = GameRules(key='key', setScores={1, 3, 5, 9})
         self.assertRaises(ScoreNotInSet, validate_score, rules, 1, 2)
 
-#
-# class TestDetermineWinner(unittest.TestCase):
-#     def test_no_winner_if_no_rounds(self):
-#         rules = GameRules(key='key', highScoreWins=True)
-#         playerOneScores = PlayerScoreHistory(key='one', currentScore=0, scores=[], playerKey='1', gameKey='1', order=0)
-#         playerTwoScores = PlayerScoreHistory(key='two', currentScore=0, scores=[], playerKey='2', gameKey='1', order=1)
-#         scoreHistory = {'one': playerOneScores, 'two': playerTwoScores}
-#
-#         assert determine_winner(rules, scoreHistory) is None
-#
-#     def test_winner_if_score_higher(self):
-#         rules = GameRules(key='key', highScoreWins=True)
-#         playerOneScores = PlayerScoreHistory(key='one', currentScore=10, scores=[5, 5], playerKey='1', gameKey='1', order=0)
-#         playerTwoScores = PlayerScoreHistory(key='two', currentScore=3, scores=[3], playerKey='2', gameKey='1', order=1)
-#         scoreHistory = {'one': playerOneScores, 'two': playerTwoScores}
-#
-#         assert determine_winner(rules, scoreHistory) == 'one'
-#
-#     def test_winner_if_score_lower(self):
-#         rules = GameRules(key='key', highScoreWins=False)
-#         playerOneScores = PlayerScoreHistory(key='one', currentScore=10, scores=[5, 5], playerKey='1', gameKey='1', order=0)
-#         playerTwoScores = PlayerScoreHistory(key='two', currentScore=3, scores=[3], playerKey='2', gameKey='1', order=1)
-#         scoreHistory = {'one': playerOneScores, 'two': playerTwoScores}
-#
-#         assert determine_winner(rules, scoreHistory) == 'two'
-#
-#     def test_winner_if_default(self):
-#         rules = GameRules(key='key')
-#         playerOneScores = PlayerScoreHistory(key='one', currentScore=10, scores=[5, 5], playerKey='1', gameKey='1', order=0)
-#         playerTwoScores = PlayerScoreHistory(key='two', currentScore=3, scores=[3], playerKey='2', gameKey='1', order=1)
-#         scoreHistory = {'one': playerOneScores, 'two': playerTwoScores}
-#
-#         assert determine_winner(rules, scoreHistory) == 'one'
+
+class TestDetermineWinner(unittest.TestCase):
+    def test_no_winner_if_no_rounds(self):
+        rules = GameRules(key='key', highScoreWins=True)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=0, scores=[], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=0, scores=[], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+
+        assert determine_winner(scoreHistory, rules) is None
+
+    def test_winner_if_score_higher(self):
+        rules = GameRules(key='key', highScoreWins=True)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=10, scores=[5, 5], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=3, scores=[3], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+
+        assert determine_winner(scoreHistory, rules) == '1'
+
+    def test_winner_if_score_lower(self):
+        rules = GameRules(key='key', highScoreWins=False)
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=10, scores=[5, 5], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=3, scores=[3], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+
+        assert determine_winner(scoreHistory, rules) == '2'
+
+    def test_winner_if_default(self):
+        rules = GameRules(key='key')
+        playerOneScores = PlayerScoreHistory(key='one', currentScore=10, scores=[5, 5], playerKey='1', gameKey='1', order=0)
+        playerTwoScores = PlayerScoreHistory(key='two', currentScore=3, scores=[3], playerKey='2', gameKey='1', order=1)
+        scoreHistory = [playerOneScores, playerTwoScores]
+
+        assert determine_winner(scoreHistory, rules) == '1'
 
 
 if __name__ == '__main__':
