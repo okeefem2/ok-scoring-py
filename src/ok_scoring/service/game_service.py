@@ -5,7 +5,6 @@ from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.model.validation_error import ValidationError
-from ok_scoring.repository.abstract_repository import AbstractRepository
 from ok_scoring.repository.helpers import unique_id, now
 
 # Create a builder function
@@ -17,31 +16,32 @@ class DescriptionRequired(ValidationError):
     pass
 
 
+class RoundNotValid(ValidationError):
+    pass
+
+
 def update_winner(game):
     game.winningPlayerKey = determine_winner(scoreHistory=game.scoreHistory, rules=game.rules)
     return game
 
 
 def validate_and_set_round_score(scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
-    if can_add_player_round(scoreHistory=scoreHistory, rules=rules, score=score):
+    if can_add_player_round(scoreHistory=scoreHistory, rules=rules, score=score, round_index=round_index):
         scoreHistory = set_round_score(scoreHistory, score, round_index)
+    else:
+        raise RoundNotValid(propertyPath=f'game.scoreHistory{{playerKey={scoreHistory.playerKey}}}[{round_index}]',
+                            errorType='invalid',
+                            errorMessage='Score invalid')
+
     return scoreHistory
 
 
-def can_add_player_round(scoreHistory: PlayerScoreHistory, rules, score: int) -> bool:
+def can_add_player_round(scoreHistory: PlayerScoreHistory, rules, score: int, round_index: int) -> bool:
     if rules is None:  # NO RULES!!
         return True
 
-    return validate_rounds(rules, len(scoreHistory.scores)) \
+    return validate_rounds(rules, scoreHistory.scores, round_index) \
            and validate_score(rules, scoreHistory.currentScore, score)
-
-
-def create_game(repo: AbstractRepository, description, players: [Player] = None, rules: GameRules = None) -> Game:
-    game = build_new_game(description=description, players=players, rules=rules)
-    # Save game to DB
-    repo.add(game)
-
-    return game
 
 
 def build_new_game(description: str, players: [Player] = None, rules: GameRules = None) -> Game:

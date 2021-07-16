@@ -7,6 +7,9 @@ class PlayerRepository(AbstractRepository):
     def __init__(self, session):
         self.session = session
 
+    def bulk_add(self, players):
+        self.session.bulk_save_objects(players)
+
     def add(self, player):
         self.session.add(player)
 
@@ -15,6 +18,9 @@ class PlayerRepository(AbstractRepository):
 
     def get_by_name(self, name):
         return self.session.query(Player).filter_by(name=name).first()
+
+    def get_by_names(self, names):
+        return self.session.query(Player).filter(Player.name.in_(names)).all()
 
     def get_by_game_key(self, game_key):
         results = self.session.query(Player).join(PlayerScoreHistory)\

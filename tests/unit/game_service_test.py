@@ -21,7 +21,8 @@ class TestCanAddPlayerRound(unittest.TestCase):
         assert can_add_player_round(
             scoreHistory=player_score_history_one,
             score=6,
-            rules=None
+            rules=None,
+            round_index=3
         ) is True
 
 

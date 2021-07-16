@@ -3,7 +3,6 @@ from ok_scoring.repository.helpers import unique_id
 
 
 def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index):
-    # TODO immutable?
     rounds = len(scoreHistory.scores)
     if round_index >= rounds:
         # default round score though...
@@ -12,8 +11,10 @@ def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index):
         # pad up to that round index with 0s
         # this code allows for idempotency, and the idea of eventual consistency if
         # round score updates come in out of order for some reason
+        # Note filling the missing rounds does create a brand new list, so this will be picked up by sql alchemy
         scoreHistory.scores = fill_missing_rounds(scoreHistory.scores, round_index + 1, rounds)
-    scoreHistory.scores[round_index] = score
+    # have to replace the list to get sqlalchemy to pick up the update
+    scoreHistory.scores = [score if i == round_index else s for i, s in enumerate(scoreHistory.scores)]
     scoreHistory.currentScore = calculate_current_score(scoreHistory.scores)
     return scoreHistory
 
@@ -41,4 +42,5 @@ def build_player_score_history(player_key, game_key, order, starting_score=0, sc
 
 def build_score_history(player_keys, game_key, starting_score=0, scores=None) -> list[PlayerScoreHistory]:
     return [build_player_score_history(player_key=key, game_key=game_key, order=i, starting_score=starting_score, scores=scores) for i, key in enumerate(player_keys)]
+    # If I ever use a dict for this structure again
     # return {key: build_player_score_history(key, game_key, starting_score, scores) for key in player_keys}

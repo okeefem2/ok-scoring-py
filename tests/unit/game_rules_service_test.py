@@ -2,10 +2,10 @@ import unittest
 
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
-from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.service.game_rules_service import validate_rounds, ExceededRounds, validate_score, ScoreBusts, \
     validate_player, \
-    ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner, ScoreNotInSet, build_new_game_rules
+    ExceededMaxPlayers, PlayerAlreadyExists, validate_players, MinPlayersNotMet, determine_winner, ScoreNotInSet, \
+    build_new_game_rules, game_complete, scores_meet_set_scores, winning_score_met, min_rounds_met
 
 
 # Pre game validations ######
@@ -71,19 +71,82 @@ class ValidatePlayers(unittest.TestCase):
 # During game validations #####
 
 
+class TestMinRoundsMet(unittest.TestCase):
+
+    def test_if_no_min_rounds_set(self):
+        assert min_rounds_met(None, [1, 2, 3, 4]) is True
+        assert min_rounds_met(0, [1, 2, 3, 4]) is True
+
+    def test_if_min_rounds_met(self):
+        assert min_rounds_met(4, [1, 2, 3, 4]) is True
+
+    def test_if_min_rounds_not_met(self):
+        assert min_rounds_met(4, [1, 2, 3]) is False
+
+
+class TestWinningScoreMet(unittest.TestCase):
+
+    def test_if_score_is_winning_score_high(self):
+        assert winning_score_met(100, 100, True, True) is True
+
+    def test_if_score_is_winning_score_low(self):
+        assert winning_score_met(100, 100, True, False) is True
+
+    def test_if_score_is_less_than_winning_score_high(self):
+        assert winning_score_met(100, 90, True, True) is False
+
+    def test_if_score_is_less_than_winning_score_low(self):
+        assert winning_score_met(100, 90, True, False) is True
+
+    def test_if_score_is_greater_than_winning_score_high(self):
+        assert winning_score_met(100, 110, True, True) is True
+
+    def test_if_score_is_greater_than_winning_score_low(self):
+        assert winning_score_met(100, 110, True, False) is False
+
+    def test_if_score_busts_high(self):
+        assert winning_score_met(100, 110, False, True) is False
+
+    def test_if_score_busts_low(self):
+        assert winning_score_met(100, 90, False, False) is False
+
+
+class TestScoresMeetSetScores(unittest.TestCase):
+
+    def test_if_player_meets_set_score_in_order(self):
+        scores_met = scores_meet_set_scores({1, 2, 3, 4}, [1, 2, 3, 4])
+        assert scores_met is True
+
+    def test_if_player_meets_set_score_out_of_order(self):
+        scores_met = scores_meet_set_scores({1, 2, 3, 4}, [4, 3, 2, 1])
+        assert scores_met is True
+
+    def test_if_no_set_scores(self):
+        scores_met = scores_meet_set_scores(None, [4, 3, 2, 1])
+        assert scores_met is False
+
+    def test_if_no_scores(self):
+        scores_met = scores_meet_set_scores({1, 2, 3, 4}, None)
+        assert scores_met is False
+
+    def test_if_scores_not_met(self):
+        scores_met = scores_meet_set_scores({1, 2, 3, 4}, [1, 3, 4])
+        assert scores_met is False
+
+
 class TestValidateRounds(unittest.TestCase):
 
     def test_can_add_score_for_player_under_round_cap(self):
         rules = GameRules(key='key', rounds=5)
-        assert validate_rounds(rules, 3) is True
+        assert validate_rounds(rules, [1, 2, 3], 3) is True
 
     def test_can_add_score_for_player_meeting_round_cap(self):
         rules = GameRules(key='key', rounds=4)
-        assert validate_rounds(rules, 3) is True
+        assert validate_rounds(rules, [1, 2, 3], 3) is True
 
     def test_cannot_add_score_for_player_at_round_cap(self):
         rules = GameRules(key='key', rounds=3)
-        self.assertRaises(ExceededRounds, validate_rounds, rules, 3)
+        self.assertRaises(ExceededRounds, validate_rounds, rules, [1, 2, 3], 3)
 
 
 class TestValidateScore(unittest.TestCase):

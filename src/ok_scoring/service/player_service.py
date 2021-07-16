@@ -8,18 +8,30 @@ class NameRequired(ValidationError):
     pass
 
 
-def create_player(name: str) -> Player:
+def build_new_player(name: str) -> Player:
     if name is None:
-        raise NameRequired('Player name is required')
+        raise NameRequired(
+            propertyPath='player.name',
+            errorType='required',
+            errorMessage='Player name is required'
+        )
     return Player(key=unique_id(), name=name, favorite=False)
 
 
-def create_players(repo: PlayerRepository, names: [str]) -> [Player]:
+def create_players(names: [str]) -> [Player]:
     players = []
     for name in names:
-        player = repo.get_by_name(name)
-        if player is None:
-            player = create_player(name)
-            repo.add(player)  # TODO maybe bulk add?
+        player = build_new_player(name)
+
+        # player = repo.get_by_name(name)
+        # if player is None:
+        #     player = build_new_player(name)
+        #     new_players.append(player)
         players.append(player)
     return players
+
+
+def filter_out_existing_names(players, names):
+    if players is None or len(players) == 0:
+        return names
+    return list(filter(lambda name: all(player.name != name for player in players), names))

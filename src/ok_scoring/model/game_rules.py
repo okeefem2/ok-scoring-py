@@ -15,6 +15,7 @@ class GameRules:
     scoreIncreasesByDefault: Optional[bool] = True
     defaultScoreStep: Optional[int] = 0
 
+    # TODO IDR what this one is haha
     rounds: Optional[int] = None
     minRoundsToWin: Optional[int] = None
     maxRounds: Optional[int] = None
@@ -26,12 +27,14 @@ class GameRules:
     maxPlayers: Optional[int] = None
 
     winningScore: Optional[int] = None
+    firstToScoreWins: Optional[bool] = None
     canBust: Optional[int] = None
 
     highScoreWins: Optional[bool] = True
 
     # a Set of possible scores
     setScores: Optional[set[int]] = None
+    # TODO add boolean to check for order of setScores
 
     # TODO a set of required score conditions - think yahtzee
     # TODO add rules for teams
