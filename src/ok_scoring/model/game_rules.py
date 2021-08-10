@@ -44,6 +44,11 @@ class GameRules:
 
     dealerSettings: Optional[DealerSettings] = None
 
+    # Determined how many scores can be in a round
+    multipleScoresPerRound: Optional[bool] = None
+    # Determines if all players must finish a round before moving on, or if it's a free for all
+    playersMustBeOnSameRound: Optional[bool] = None
+
     # TODO add boolean to check for order of setScores
 
     # TODO a set of required score conditions - think yahtzee

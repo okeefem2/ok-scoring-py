@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 
-# TODO
 
 @dataclass()
 class ScoreRound:
-    value: int
-
+    scores: [int]
+    roundScore: int
