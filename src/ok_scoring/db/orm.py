@@ -1,3 +1,5 @@
+from ok_scoring.db.score_round_mapper import score_round
+from ok_scoring.model.score_round import ScoreRound
 from sqlalchemy.orm import mapper, relationship
 
 from ok_scoring.db.favorite_game_mapper import favorite_game
@@ -18,9 +20,20 @@ def start_mappers():
         game_rules
     )
     player_mapper = mapper(Player, player)
+    score_rounds_mapper = mapper(
+        ScoreRound,
+        score_round,
+    )
     player_score_history_mapper = mapper(
         PlayerScoreHistory,
         player_score_history,
+        properties={
+            'scores': relationship(
+                ScoreRound,
+                cascade='all, delete-orphan',
+                lazy="joined",
+            )
+        },
     )
     game_mapper = mapper(
         Game,

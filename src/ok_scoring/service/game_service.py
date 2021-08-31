@@ -23,13 +23,13 @@ class RoundNotValid(ValidationError):
 
 
 # TODO probably need to compare previous game state to new game state
-def update_dealer(new_game: Game, old_game: Game, round_index):
+def update_dealer(new_game: Game, previous_score_history: [PlayerScoreHistory], round_index):
     # TODO only update dealer if new round completes current round
     # TODO this raises the question of if we should allow a player to have rounds way ahead of another player...
 
     if is_current_round(new_game.scoreHistory, round_index) \
             and is_round_complete(new_game.scoreHistory, round_index) \
-            and not is_round_complete(old_game.scoreHistory, round_index):
+            and not is_round_complete(previous_score_history, round_index):
         new_game.dealingPlayerKey = \
             determine_next_dealer(new_game.scoreHistory, new_game.rules, new_game.dealingPlayerKey)
     return new_game
@@ -40,15 +40,15 @@ def update_winner(game):
     return game
 
 
-def validate_and_set_round_score(scoreHistory: PlayerScoreHistory, rules: GameRules, score: int, round_index: int):
-    if can_add_player_round(scoreHistory=scoreHistory, rules=rules, score=score, round_index=round_index):
-        scoreHistory = set_round_score(scoreHistory, score, round_index)
+def validate_and_set_round_score(score_history: PlayerScoreHistory, rules: GameRules, score: int, round_index: int, score_index: int):
+    if can_add_player_round(scoreHistory=score_history, rules=rules, score=score, round_index=round_index):
+        score_history = set_round_score(score_history, score, round_index, score_index=score_index)
     else:
-        raise RoundNotValid(propertyPath=f'game.scoreHistory{{playerKey={scoreHistory.playerKey}}}[{round_index}]',
+        raise RoundNotValid(propertyPath=f'game.scoreHistory{{playerKey={score_history.playerKey}}}[{round_index}]',
                             errorType='invalid',
                             errorMessage='Score invalid')
 
-    return scoreHistory
+    return score_history
 
 
 def can_add_player_round(scoreHistory: PlayerScoreHistory, rules, score: int, round_index: int) -> bool:

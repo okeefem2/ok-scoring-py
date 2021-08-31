@@ -37,7 +37,7 @@ def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index, score_
         scoreHistory.scores = fill_missing_indexes_to_length(
             scoreHistory.scores,
             round_index + 1,
-            lambda: ScoreRound(roundScore=0, scores=round_scores)
+            lambda: ScoreRound(key=unique_id(), playerScoreHistoryKey=scoreHistory.key, roundScore=0, scores=round_scores)
         )
     # have to replace the list to get sqlalchemy to pick up the update
     scoreRound = scoreHistory.scores[round_index]

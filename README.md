@@ -27,6 +27,10 @@ use docker compose to build the volume, images and containers needed to run and 
 
 to run e2e/integration tests run `pytest`
 
+to run e2e tests only
+```bash
+pytest ./tests/e2e
+```
 
 ### Alembic migrations
 
@@ -40,4 +44,13 @@ if this is not the case, then the auto migrations will not pick up the data from
 then run the migration
 
 `alembic upgrade head`
+
+## Delete Data
+
+```sql
+delete from "gameRules";
+delete from "playerScoreHistory";
+delete from game;
+delete from player;
+```
 

@@ -1,3 +1,5 @@
+import copy
+
 from flask import Flask, request
 from ok_scoring.model.validation_error import ValidationError
 from ok_scoring.repository.game_repository import GameRepository
@@ -97,24 +99,37 @@ def set_player_round_score(game_key, player_key):
         game_repo = GameRepository(session)
 
         score = int(request.json.get('score'))
-        score_index = int(request.json.get('score_index'))
-        game = game_repo.get(str(game_key))
+        score_index_json = request.json.get('score_index')
+        score_index = int(score_index_json) if score_index_json is not None else 0
+        try:
+            round_index = int(request.json.get('round_index'))
+        except Exception as e:
+            return {'error': 'round_index must be a valid int'}, 422
 
+        game = game_repo.get(str(game_key))
 
         # TODO service these
         player_score_history = next((score for score in game.scoreHistory if str(score.playerKey) == str(player_key)), None)
 
         # TODO this needs to be a new service validation
         # Can add round to game vs can add round for player
-        if score_index >= len(player_score_history.scores) and game_complete(game.rules, game.scoreHistory):
+        if round_index >= len(player_score_history.scores) and game_complete(game.rules, game.scoreHistory):
             return {'error': 'Cannot add a new round to a complete game'}, 422
 
+        # TODO I think I need to have all the scores load here
+        previous_score_history = copy.deepcopy(game.scoreHistory)
+
         player_score_history = \
-            validate_and_set_round_score(player_score_history, game.rules, score, score_index)
+            validate_and_set_round_score(score_history=player_score_history,
+                                         rules=game.rules,
+                                         score=score,
+                                         score_index=score_index,
+                                         round_index=round_index
+                                         )
 
         game.scoreHistory = [player_score_history if s.playerKey == player_key else s for s in game.scoreHistory]
         update_winner(game)
-        update_dealer(game, score_index)
+        update_dealer(new_game=game, round_index=round_index, previous_score_history=previous_score_history)
         session.commit()
 
         return {'game': game}, 200
