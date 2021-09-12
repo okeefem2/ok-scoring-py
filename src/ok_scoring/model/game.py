@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.game_rules_v2 import GameRulesV2
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 
 
@@ -19,3 +20,4 @@ class Game:
 
     scoreHistory: Optional[list[PlayerScoreHistory]] = None
     rules: Optional[GameRules] = None
+    rulesV2: Optional[GameRulesV2] = None

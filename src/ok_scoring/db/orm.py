@@ -1,4 +1,6 @@
+from ok_scoring.db.game_rules_v2_mapper import game_rules_v2
 from ok_scoring.db.score_round_mapper import score_round
+from ok_scoring.model.game_rules_v2 import GameRulesV2
 from ok_scoring.model.score_round import ScoreRound
 from sqlalchemy.orm import mapper, relationship
 
@@ -18,6 +20,10 @@ def start_mappers():
     game_rules_mapper = mapper(
         GameRules,
         game_rules
+    )
+    game_rules_v2_mapper = mapper(
+        GameRulesV2,
+        game_rules_v2
     )
     player_mapper = mapper(Player, player)
     score_rounds_mapper = mapper(
@@ -41,6 +47,11 @@ def start_mappers():
         properties={
             'rules': relationship(
                 GameRules,
+                uselist=False,
+                cascade='all, delete-orphan'
+            ),
+            'rulesV2': relationship(
+                GameRulesV2,
                 uselist=False,
                 cascade='all, delete-orphan'
             ),
