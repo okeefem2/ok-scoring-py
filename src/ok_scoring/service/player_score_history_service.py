@@ -1,25 +1,25 @@
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.model.score_round import ScoreRound
-from ok_scoring.model.validation_error import ValidationError
+from ok_scoring.model.validation_error import OKValidationError
 from ok_scoring.repository.helpers import unique_id
 from ok_scoring.utils.list.fill_missing_indexes_to_length import fill_missing_indexes_to_length
 from ok_scoring.utils.list.update_and_copy_list import update_and_copy_list
 
 
-class PlayerKeyRequired(ValidationError):
+class PlayerKeyRequired(OKValidationError):
     pass
 
 
-class GameKeyRequired(ValidationError):
+class GameKeyRequired(OKValidationError):
     pass
 
 
-class OrderRequired(ValidationError):
+class OrderRequired(OKValidationError):
     pass
 
 
-def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index, score_index):
-    rounds = len(scoreHistory.scores)
+def set_round_score(score_history: PlayerScoreHistory, score, round_index, score_index):
+    rounds = len(score_history.scores)
     if round_index >= rounds:
         # default round score though...
         # if round_index is past the end of the current rounds list
@@ -34,19 +34,24 @@ def set_round_score(scoreHistory: PlayerScoreHistory, score, round_index, score_
             score_index + 1,
             lambda: 0
         )
-        scoreHistory.scores = fill_missing_indexes_to_length(
-            scoreHistory.scores,
+        score_history.scores = fill_missing_indexes_to_length(
+            score_history.scores,
             round_index + 1,
-            lambda: ScoreRound(key=unique_id(), playerScoreHistoryKey=scoreHistory.key, roundScore=0, scores=round_scores)
+            lambda: ScoreRound(
+                key=unique_id(),
+                playerScoreHistoryKey=score_history.key,
+                roundScore=0,
+                scores=round_scores
+            )
         )
     # have to replace the list to get sqlalchemy to pick up the update
-    scoreRound = scoreHistory.scores[round_index]
+    scoreRound = score_history.scores[round_index]
     scoreRound.scores = fill_missing_indexes_to_length(scoreRound.scores, score_index, lambda: 0)
     scoreRound.scores = update_and_copy_list(scoreRound.scores, score, score_index)
     scoreRound = calculate_round_score(scoreRound)
-    scoreHistory.scores = update_and_copy_list(scoreHistory.scores, scoreRound, round_index)
-    scoreHistory.currentScore = calculate_current_score(scoreHistory.scores)
-    return scoreHistory
+    score_history.scores = update_and_copy_list(score_history.scores, scoreRound, round_index)
+    score_history.currentScore = calculate_current_score(score_history.scores)
+    return score_history
 
 
 def calculate_round_score(scoreRound: ScoreRound):

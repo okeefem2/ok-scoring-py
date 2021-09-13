@@ -1,4 +1,4 @@
-class ValidationError(Exception):
+class OKValidationError(Exception):
     def __init__(self, propertyPath, errorType, errorMessage):
         # Call the base class constructor with the parameters it needs
         super().__init__(f'{propertyPath} invalid: {errorMessage}')

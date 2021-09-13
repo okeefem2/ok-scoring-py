@@ -49,6 +49,7 @@ then run the migration
 
 ```sql
 delete from "gameRules";
+delete from "gameRulesV2";
 delete from "playerScoreHistory";
 delete from game;
 delete from player;

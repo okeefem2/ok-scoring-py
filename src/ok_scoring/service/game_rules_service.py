@@ -4,41 +4,41 @@ from typing import Optional
 from ok_scoring.model.game_rules import GameRules, DealerSettings
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
-from ok_scoring.model.validation_error import ValidationError
+from ok_scoring.model.validation_error import OKValidationError
 from ok_scoring.repository.helpers import unique_id
 from ok_scoring.service.player_score_history_service import find_by_player_key, \
     find_by_order_index
 
 
-class ExceededMaxPlayers(ValidationError):
+class ExceededMaxPlayers(OKValidationError):
     pass
 
 
-class MinPlayersNotMet(ValidationError):
+class MinPlayersNotMet(OKValidationError):
     pass
 
 
-class PlayerAlreadyExists(ValidationError):
+class PlayerAlreadyExists(OKValidationError):
     pass
 
 
-class ExceededRounds(ValidationError):
+class ExceededRounds(OKValidationError):
     pass
 
 
-class ScoreBusts(ValidationError):
+class ScoreBusts(OKValidationError):
     pass
 
 
-class ScoreNotInSet(ValidationError):
+class ScoreNotInSet(OKValidationError):
     pass
 
 
-class ScoreSignInvalid(ValidationError):
+class ScoreSignInvalid(OKValidationError):
     pass
 
 
-class GameAlreadyWon(ValidationError):
+class GameAlreadyWon(OKValidationError):
     pass
 
 

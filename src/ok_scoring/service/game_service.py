@@ -4,7 +4,7 @@ from ok_scoring.model.game import Game
 from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
-from ok_scoring.model.validation_error import ValidationError
+from ok_scoring.model.validation_error import OKValidationError
 from ok_scoring.repository.helpers import unique_id, now
 
 # Create a builder function
@@ -14,11 +14,11 @@ from ok_scoring.service.player_score_history_service import set_round_score, bui
     is_current_round
 
 
-class DescriptionRequired(ValidationError):
+class DescriptionRequired(OKValidationError):
     pass
 
 
-class RoundNotValid(ValidationError):
+class RoundNotValid(OKValidationError):
     pass
 
 

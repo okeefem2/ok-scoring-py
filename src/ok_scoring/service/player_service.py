@@ -1,9 +1,9 @@
 from ok_scoring.model.player import Player
-from ok_scoring.model.validation_error import ValidationError
+from ok_scoring.model.validation_error import OKValidationError
 from ok_scoring.repository.helpers import unique_id
 
 
-class NameRequired(ValidationError):
+class NameRequired(OKValidationError):
     pass
 
 

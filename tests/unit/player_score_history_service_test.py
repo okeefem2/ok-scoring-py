@@ -10,9 +10,9 @@ from ok_scoring.service.player_score_history_service import set_round_score, is_
 class TestSetRoundScore(unittest.TestCase):
 
     def test_adding_round_score_updates_current_score(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3], roundScore=3)
-        round_three = ScoreRound(scores=[-2], roundScore=-2)
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one')
+        round_two = ScoreRound(scores=[3], roundScore=3, key='2', playerScoreHistoryKey='one')
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one')
         player_score_history_one = PlayerScoreHistory(
             key='one',
             scores=[round_one, round_two, round_three],

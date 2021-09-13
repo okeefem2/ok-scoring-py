@@ -2,7 +2,7 @@ from ok_scoring.db.game_rules_v2_mapper import game_rules_v2
 from ok_scoring.db.score_round_mapper import score_round
 from ok_scoring.model.game_rules_v2 import GameRulesV2
 from ok_scoring.model.score_round import ScoreRound
-from sqlalchemy.orm import mapper, relationship
+from sqlalchemy.orm import mapper, relationship, clear_mappers
 
 from ok_scoring.db.favorite_game_mapper import favorite_game
 from ok_scoring.db.game_rules_mapper import game_rules
@@ -17,6 +17,7 @@ from ok_scoring.model.player_score_history import PlayerScoreHistory
 
 
 def start_mappers():
+    clear_mappers()
     game_rules_mapper = mapper(
         GameRules,
         game_rules
