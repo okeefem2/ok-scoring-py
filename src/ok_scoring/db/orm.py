@@ -39,6 +39,7 @@ def start_mappers():
                 ScoreRound,
                 cascade='all, delete-orphan',
                 lazy="joined",
+                order_by=lambda: ScoreRound.order
             )
         },
     )

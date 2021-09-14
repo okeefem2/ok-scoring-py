@@ -6,14 +6,15 @@ from ok_scoring.model.validation_error import OKValidationError
 from ok_scoring.repository.game_repository import GameRepository
 from ok_scoring.repository.player_repository import PlayerRepository
 from ok_scoring.service.game_rules_service_v2 import validate_game_state, is_game_won
-from ok_scoring.service.player_score_history_service import set_round_score
+from ok_scoring.service.player_score_history_service import set_round_score, find_by_player_key
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from ok_scoring import ok_scoring_config
 from ok_scoring.db import orm
-from ok_scoring.service.game_rules_service import build_new_game_rules, game_complete
-from ok_scoring.service.game_service import validate_and_set_round_score, update_winner, build_new_game, update_dealer
+from ok_scoring.service.game_rules_service import build_new_game_rules, game_complete, build_new_game_rules_v2
+from ok_scoring.service.game_service import validate_and_set_round_score, update_winner, build_new_game, update_dealer, \
+    update_winner_v2, update_dealer_v2
 from ok_scoring.service.player_service import create_players, filter_out_existing_names
 
 orm.start_mappers()
@@ -112,8 +113,7 @@ def set_player_round_score(game_key, player_key):
         game = game_repo.get(str(game_key))
 
         # TODO service these
-        player_score_history = next((score for score in game.scoreHistory if str(score.playerKey) == str(player_key)),
-                                    None)
+        player_score_history = find_by_player_key(game.scoreHistory, player_key)
 
         # TODO this needs to be a new service validation
         # Can add round to game vs can add round for player
@@ -159,10 +159,10 @@ def create_game_v2_endpoint():
 
         players = new_players + existing_players
 
-        rules = build_new_game_rules(request.json.get('rules'))
+        rules = build_new_game_rules_v2(request.json.get('rules'))
         game = build_new_game(description=request.json.get('description'),
                               players=players,
-                              rules=rules)
+                              rulesV2=rules)
         game_repo.add(game)
         session.commit()
         # Not sure if I need to return players here
@@ -189,10 +189,7 @@ def set_player_round_score_v2_endpoint(game_key, player_key):
             return {'error': 'round_index must be a valid int'}, 422
 
         game = game_repo.get(str(game_key))
-
-        # TODO service these
-        player_score_history = next((score for score in game.scoreHistory if str(score.playerKey) == str(player_key)),
-                                    None)
+        player_score_history = find_by_player_key(game.scoreHistory, player_key)
 
         # TODO this needs to be a new service validation
         # Can add round to game vs can add round for player
@@ -214,8 +211,8 @@ def set_player_round_score_v2_endpoint(game_key, player_key):
             validate_game_state(game)
         except ValidationError as e:
             return e, 422
-        update_winner(game)
-        update_dealer(new_game=game, round_index=round_index, previous_score_history=previous_score_history)
+        update_winner_v2(game)
+        update_dealer_v2(new_game=game, round_index=round_index, previous_score_history=previous_score_history)
         session.commit()
 
         return {'game': game}, 200

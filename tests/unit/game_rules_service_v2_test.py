@@ -12,8 +12,8 @@ import json
 class ValidateGameStateTest(unittest.TestCase):
 
     def test_game_initial_game_state_valid(self):
-        win_state_path = './schemas/cribbage-win-state-schema.json'
-        valid_state_path = './schemas/cribbage-valid-state-schema.json'
+        win_state_path = '../schemas/cribbage-win-state-schema.json'
+        valid_state_path = '../schemas/cribbage-valid-state-schema.json'
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)
@@ -53,8 +53,8 @@ class ValidateGameStateTest(unittest.TestCase):
         assert validate_game_state(game) is True
 
     def test_invalid_game_state_valid(self):
-        win_state_path = './schemas/cribbage-win-state-schema.json'
-        valid_state_path = './schemas/cribbage-valid-state-schema.json'
+        win_state_path = '../schemas/cribbage-win-state-schema.json'
+        valid_state_path = '../schemas/cribbage-valid-state-schema.json'
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)
@@ -86,8 +86,8 @@ class ValidateGameStateTest(unittest.TestCase):
 
 
     def test_game_initial_game_state_not_won(self):
-        win_state_path = './schemas/cribbage-win-state-schema.json'
-        valid_state_path = './schemas/cribbage-valid-state-schema.json'
+        win_state_path = '../schemas/cribbage-win-state-schema.json'
+        valid_state_path = '../schemas/cribbage-valid-state-schema.json'
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)
@@ -127,8 +127,8 @@ class ValidateGameStateTest(unittest.TestCase):
         assert is_game_won(game) is False
 
     def test_game_won(self):
-        win_state_path = './schemas/cribbage-win-state-schema.json'
-        valid_state_path = './schemas/cribbage-valid-state-schema.json'
+        win_state_path = '../schemas/cribbage-win-state-schema.json'
+        valid_state_path = '../schemas/cribbage-valid-state-schema.json'
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)

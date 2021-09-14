@@ -7,3 +7,4 @@ class ScoreRound:
     playerScoreHistoryKey: str
     scores: [int]
     roundScore: int
+    order: int

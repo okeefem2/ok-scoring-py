@@ -10,5 +10,6 @@ score_round = Table(
     Column('playerScoreHistoryKey', UUID, ForeignKey('playerScoreHistory.key')),
     Column('scores', ARRAY(Integer)),
     Column('roundScore', Integer, nullable=False),
+    Column('order', Integer, nullable=False),
 )
 

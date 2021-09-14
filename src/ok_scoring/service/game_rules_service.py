@@ -2,6 +2,7 @@ from math import inf
 from typing import Optional
 
 from ok_scoring.model.game_rules import GameRules, DealerSettings
+from ok_scoring.model.game_rules_v2 import GameRulesV2
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.model.validation_error import OKValidationError
@@ -48,6 +49,14 @@ class GameAlreadyWon(OKValidationError):
 # TODO validate game rules properties
 def build_new_game_rules(rules_dict: dict) -> GameRules:
     rules = GameRules(key=unique_id())
+    if type(rules_dict) is dict:
+        for key in rules_dict:
+            if hasattr(rules, key):
+                setattr(rules, key, rules_dict[key])
+    return rules
+
+def build_new_game_rules_v2(rules_dict: dict) -> GameRulesV2:
+    rules = GameRulesV2(key=unique_id())
     if type(rules_dict) is dict:
         for key in rules_dict:
             if hasattr(rules, key):

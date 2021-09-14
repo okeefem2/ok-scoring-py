@@ -41,7 +41,8 @@ def set_round_score(score_history: PlayerScoreHistory, score, round_index, score
                 key=unique_id(),
                 playerScoreHistoryKey=score_history.key,
                 roundScore=0,
-                scores=round_scores
+                scores=round_scores,
+                order=round_index
             )
         )
     # have to replace the list to get sqlalchemy to pick up the update
@@ -104,10 +105,8 @@ def build_score_history(player_keys, game_key: str, starting_score=0, scores=Non
 
 
 def find_by_player_key(scoreHistory: [PlayerScoreHistory], key: str) -> PlayerScoreHistory:
-    return None if scoreHistory is None else next(
-        filter(lambda playerScoreHistory: playerScoreHistory.playerKey == key, scoreHistory),
-        None
-    )
+    return None if scoreHistory is None else \
+        next((score for score in scoreHistory if str(score.playerKey) == str(key)), None)
 
 
 def find_by_order_index(scoreHistory: [PlayerScoreHistory], orderIndex) -> PlayerScoreHistory:

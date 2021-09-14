@@ -2,6 +2,7 @@ import time
 
 from ok_scoring.model.game import Game
 from ok_scoring.model.game_rules import GameRules
+from ok_scoring.model.game_rules_v2 import GameRulesV2
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.model.validation_error import OKValidationError
@@ -10,6 +11,7 @@ from ok_scoring.repository.helpers import unique_id, now
 # Create a builder function
 from ok_scoring.service.game_rules_service import validate_rounds, validate_score, validate_players, determine_winner, \
     determine_next_dealer
+from ok_scoring.service.game_rules_service_v2 import determine_winner_v2, determine_next_dealer_v2
 from ok_scoring.service.player_score_history_service import set_round_score, build_score_history, is_round_complete, \
     is_current_round
 
@@ -40,6 +42,24 @@ def update_winner(game):
     return game
 
 
+# TODO probably need to compare previous game state to new game state
+def update_dealer_v2(new_game: Game, previous_score_history: [PlayerScoreHistory], round_index):
+    # TODO only update dealer if new round completes current round
+    # TODO this raises the question of if we should allow a player to have rounds way ahead of another player...
+
+    if is_current_round(new_game.scoreHistory, round_index) \
+            and is_round_complete(new_game.scoreHistory, round_index) \
+            and not is_round_complete(previous_score_history, round_index):
+        new_game.dealingPlayerKey = \
+            determine_next_dealer_v2(new_game.scoreHistory, new_game.rulesV2, new_game.dealingPlayerKey)
+    return new_game
+
+
+def update_winner_v2(game):
+    game.winningPlayerKey = determine_winner_v2(scoreHistory=game.scoreHistory, rules=game.rulesV2)
+    return game
+
+
 def validate_and_set_round_score(score_history: PlayerScoreHistory, rules: GameRules, score: int, round_index: int, score_index: int):
     if can_add_player_round(scoreHistory=score_history, rules=rules, score=score, round_index=round_index):
         score_history = set_round_score(score_history, score, round_index, score_index=score_index)
@@ -59,7 +79,7 @@ def can_add_player_round(scoreHistory: PlayerScoreHistory, rules, score: int, ro
            and validate_score(rules, scoreHistory.currentScore, score)
 
 
-def build_new_game(description: str, players: [Player] = None, rules: GameRules = None) -> Game:
+def build_new_game(description: str, players: [Player] = None, rules: GameRules = None, rulesV2: GameRulesV2 = None) -> Game:
     if validate_players(rules=rules, players=players):
         if description is None:
             raise DescriptionRequired(
@@ -82,6 +102,7 @@ def build_new_game(description: str, players: [Player] = None, rules: GameRules 
             description=description,
             date=date,
             rules=rules,
+            rulesV2=rulesV2,
             scoreHistory=score_history
         )
 

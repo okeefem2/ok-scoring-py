@@ -25,11 +25,17 @@ use docker compose to build the volume, images and containers needed to run and 
 
 ### pytest
 
-to run e2e/integration tests run `pytest`
+to run e2e/integration/unit tests run `pytest`
 
 to run e2e tests only
 ```bash
 pytest ./tests/e2e
+```
+
+to run an individual e2e test
+
+```bash
+pytest ./tests/e2e/test_play_cribbage_v2.py
 ```
 
 ### Alembic migrations
@@ -50,6 +56,7 @@ then run the migration
 ```sql
 delete from "gameRules";
 delete from "gameRulesV2";
+delete from "scoreRound";
 delete from "playerScoreHistory";
 delete from game;
 delete from player;

@@ -7,8 +7,8 @@ from ok_scoring.model.dealer_settings import DealerSettings
 @dataclass()
 class GameRulesV2:
     key: str
-    validStateSchema: dict
-    winningSchema: dict
+    validStateSchema: dict = None
+    winningSchema: dict = None
     gameKey: Optional[str] = None
 
     # cannot be done in json schema... should these be a separate table?
