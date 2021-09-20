@@ -10,7 +10,7 @@ from ok_scoring.service.player_score_history_service import find_by_player_key
 
 from ok_scoring.service.game_rules_service import build_new_game_rules, game_complete
 from ok_scoring.service.game_service import validate_and_set_round_score, update_winner, build_new_game, update_dealer
-from ok_scoring.service.player_service import create_players, filter_out_existing_names
+from ok_scoring.service.player_service import create_players
 
 
 app = Flask(__name__)
@@ -34,9 +34,7 @@ def create_game_endpoint():
         players_repo = PlayerRepository(session)
         player_names = request.json.get('players')
         existing_players = players_repo.get_by_names(player_names)
-        # TODO combine these two steps?
-        new_player_names = filter_out_existing_names(existing_players, player_names)
-        new_players = create_players(new_player_names)
+        new_players = create_players(player_names, existing_players)
         players_repo.bulk_add(new_players)
 
         players = new_players + existing_players
@@ -74,7 +72,6 @@ def fetch_players_for_game(game_key):
     try:
         session = db_session()
         repo = PlayerRepository(session)
-        print('fetching players!')
         players = repo.get_by_game_key(str(game_key))
         if players is None:
             return 404

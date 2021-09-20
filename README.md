@@ -62,3 +62,22 @@ delete from game;
 delete from player;
 ```
 
+## TODO List
+
+List of items I would like to accomplish
+
+- refactor e2e tests to use a base test function that can be passed scenarios to test []
+- Performance testing to identify weak points []
+- Security []
+- Build the v2 API in fastify and performance test []
+- Clean up existing service code and tests []
+  - Rules service could really use some attention I think
+- Add passing Yahtzee e2e test []
+- CI/CD []
+- Frontend app for managing game rules []
+- Add endpoints for []
+    - duplicating a game
+    - deleting data?
+- ML and analytics package []
+
+

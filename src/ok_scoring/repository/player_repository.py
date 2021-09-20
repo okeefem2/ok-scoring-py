@@ -25,7 +25,6 @@ class PlayerRepository(AbstractRepository):
     def get_by_game_key(self, game_key):
         results = self.session.query(Player).join(PlayerScoreHistory)\
             .filter_by(gameKey=game_key).all()
-        print('results', results)
         return results
 
     def list(self):

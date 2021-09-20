@@ -10,7 +10,7 @@ from ok_scoring.service.game_rules_service import build_new_game_rules_v2
 from ok_scoring.service.game_rules_service_v2 import can_add_round, validate_game_state
 from ok_scoring.service.game_service import build_new_game, update_winner_v2, update_dealer_v2
 from ok_scoring.service.player_score_history_service import set_round_score, find_by_player_key
-from ok_scoring.service.player_service import filter_out_existing_names, create_players
+from ok_scoring.service.player_service import create_players
 
 
 api_v2 = Blueprint('v2', __name__)
@@ -24,12 +24,10 @@ def create_game_endpoint():
         players_repo = PlayerRepository(session)
         player_names = request.json.get('players')
         existing_players = players_repo.get_by_names(player_names)
-        new_player_names = filter_out_existing_names(existing_players, player_names)
-        new_players = create_players(new_player_names)
+        new_players = create_players(player_names, existing_players)
         players_repo.bulk_add(new_players)
 
         players = new_players + existing_players
-
         rules = build_new_game_rules_v2(request.json.get('rules'))
         game = build_new_game(description=request.json.get('description'),
                               players=players,

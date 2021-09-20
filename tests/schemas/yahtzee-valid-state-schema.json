@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+      "scoreHistory": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "currentScore": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "scores": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scores": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "minItems": 2,
+        "maxItems": 6
+      }
+  }
+}

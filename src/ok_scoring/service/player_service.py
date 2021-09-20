@@ -17,12 +17,9 @@ def build_new_player(name: str) -> Player:
     return Player(key=unique_id(), name=name, favorite=False)
 
 
-def create_players(names: [str]) -> [Player]:
-    players = []
-    for name in names:
-        player = build_new_player(name)
-        players.append(player)
-    return players
+def create_players(names: [str], existing_players: [Player]) -> [Player]:
+    new_player_names = filter_out_existing_names(existing_players, names)
+    return [build_new_player(name) for name in new_player_names]
 
 
 def filter_out_existing_names(players, names):
