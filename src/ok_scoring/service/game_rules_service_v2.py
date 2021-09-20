@@ -38,8 +38,12 @@ def is_game_won(game: Game) -> bool:
     return jsonschema_rs.is_valid(schema, convert_score_history_to_dict(score_history))
 
 
-
 # Rules that cannot be captured with json schema currently
+
+
+def can_add_round(round_index: int, player_score_history: PlayerScoreHistory, game: Game) -> bool:
+    return round_index >= len(player_score_history.scores) and is_game_won(game)
+
 
 def score_beats_winner(highScoreWins, winningScore, score):
     return score > winningScore if highScoreWins else score < winningScore
