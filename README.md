@@ -35,7 +35,7 @@ pytest ./tests/e2e
 to run an individual e2e test
 
 ```bash
-pytest ./tests/e2e/test_play_cribbage_v2.py
+pytest ./tests/e2e/test_play_cribbage.py
 ```
 
 ### Alembic migrations
@@ -66,18 +66,19 @@ delete from player;
 
 List of items I would like to accomplish
 
-- refactor e2e tests to use a base test function that can be passed scenarios to test []
-- Performance testing to identify weak points []
-- Security []
-- Build the v2 API in fastify and performance test []
-- Clean up existing service code and tests []
-  - Rules service could really use some attention I think
-- Add passing Yahtzee e2e test []
-- CI/CD []
-- Frontend app for managing game rules []
-- Add endpoints for []
-    - duplicating a game
-    - deleting data?
-- ML and analytics package []
+  - refactor e2e tests to use a base test function that can be passed scenarios to test [x]
+  - Add passing real cribbage e2e test []
+  - Frontend app for managing game rules []
+  - Frontend app for playing game web []
+  - Performance testing to identify weak points []
+  - Security []
+  - Build the v2 API in fastify and performance test []
+  - Clean up existing service code and tests []
+    - Rules service could really use some attention I think
+  - CI/CD []
+  - Add endpoints for []
+      - duplicating a game
+      - deleting data?
+  - ML and analytics package []
 
 

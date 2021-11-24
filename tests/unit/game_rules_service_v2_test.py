@@ -2,10 +2,10 @@ import unittest
 
 from jsonschema_rs import ValidationError
 from ok_scoring.model.game import Game
-from ok_scoring.model.game_rules_v2 import GameRulesV2
+from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 from ok_scoring.model.score_round import ScoreRound
-from ok_scoring.service.game_rules_service_v2 import validate_game_state, is_game_won
+from ok_scoring.service.game_rules_service import validate_game_state, is_game_won
 import json
 
 
@@ -17,7 +17,7 @@ class ValidateGameStateTest(unittest.TestCase):
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)
-            gameRules = GameRulesV2(
+            gameRules = GameRules(
                 key='key',
                 winningSchema=win_state_schema,
                 validStateSchema=valid_state_schema,
@@ -58,7 +58,7 @@ class ValidateGameStateTest(unittest.TestCase):
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)
-            gameRules = GameRulesV2(
+            gameRules = GameRules(
                 key='key',
                 winningSchema=win_state_schema,
                 validStateSchema=valid_state_schema,
@@ -91,7 +91,7 @@ class ValidateGameStateTest(unittest.TestCase):
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)
-            gameRules = GameRulesV2(
+            gameRules = GameRules(
                 key='key',
                 winningSchema=win_state_schema,
                 validStateSchema=valid_state_schema,
@@ -132,7 +132,7 @@ class ValidateGameStateTest(unittest.TestCase):
         with open(win_state_path) as win_state_file, open(valid_state_path) as valid_state_file:
             win_state_schema = json.load(win_state_file)
             valid_state_schema = json.load(valid_state_file)
-            gameRules = GameRulesV2(
+            gameRules = GameRules(
                 key='key',
                 winningSchema=win_state_schema,
                 validStateSchema=valid_state_schema,

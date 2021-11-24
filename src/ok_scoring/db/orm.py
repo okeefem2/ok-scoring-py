@@ -1,30 +1,24 @@
-from ok_scoring.db.game_rules_v2_mapper import game_rules_v2
+from ok_scoring.db.game_rules_mapper import game_rules
 from ok_scoring.db.score_round_mapper import score_round
-from ok_scoring.model.game_rules_v2 import GameRulesV2
+from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.score_round import ScoreRound
 from sqlalchemy.orm import mapper, relationship, clear_mappers
 
 from ok_scoring.db.favorite_game_mapper import favorite_game
-from ok_scoring.db.game_rules_mapper import game_rules
 from ok_scoring.db.player_mapper import player
 from ok_scoring.db.player_score_history_mapper import player_score_history
 from ok_scoring.db.game_mapper import game
 from ok_scoring.model.favorite_game import FavoriteGame
 from ok_scoring.model.game import Game
-from ok_scoring.model.game_rules import GameRules
 from ok_scoring.model.player import Player
 from ok_scoring.model.player_score_history import PlayerScoreHistory
 
 
 def start_mappers():
     clear_mappers()
-    game_rules_mapper = mapper(
+    game_rules_v2_mapper = mapper(
         GameRules,
         game_rules
-    )
-    game_rules_v2_mapper = mapper(
-        GameRulesV2,
-        game_rules_v2
     )
     player_mapper = mapper(Player, player)
     score_rounds_mapper = mapper(
@@ -49,11 +43,6 @@ def start_mappers():
         properties={
             'rules': relationship(
                 GameRules,
-                uselist=False,
-                cascade='all, delete-orphan'
-            ),
-            'rulesV2': relationship(
-                GameRulesV2,
                 uselist=False,
                 cascade='all, delete-orphan'
             ),

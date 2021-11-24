@@ -16,6 +16,8 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, clear_mappers
 
+pytest_plugins = ['helpers_namespace']
+
 
 @pytest.fixture
 def in_memory_db():

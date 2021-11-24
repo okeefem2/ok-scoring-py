@@ -1,4 +1,4 @@
-"""Adding game rules v2 data model
+"""Adding game rules games data model
 
 Revision ID: 283dc05166fc
 Revises: b30389367ea8

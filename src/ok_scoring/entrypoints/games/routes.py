@@ -7,16 +7,16 @@ from ok_scoring.model.validation_error import OKValidationError
 from ok_scoring.repository.game_repository import GameRepository
 from ok_scoring.repository.player_repository import PlayerRepository
 from ok_scoring.service.game_rules_service import build_new_game_rules_v2
-from ok_scoring.service.game_rules_service_v2 import can_add_round, validate_game_state
+from ok_scoring.service.game_rules_service import can_add_round, validate_game_state
 from ok_scoring.service.game_service import build_new_game, update_winner_v2, update_dealer_v2
 from ok_scoring.service.player_score_history_service import set_round_score, find_by_player_key
 from ok_scoring.service.player_service import create_players
 
 
-api_v2 = Blueprint('v2', __name__)
+games = Blueprint('games', __name__)
 
 
-@api_v2.route('/games', methods=['POST'])
+@games.route('/', methods=['POST'])
 def create_game_endpoint():
     try:
         session = db_session()
@@ -44,8 +44,8 @@ def create_game_endpoint():
 
 
 # TODO could consider a POST vs PUT workflow
-@api_v2.route('/games/<uuid:game_key>/scores/<uuid:player_key>', methods=['POST'])
-def set_player_round_score_v2_endpoint(game_key, player_key):
+@games.route('/<uuid:game_key>/scores/<uuid:player_key>', methods=['POST'])
+def set_player_round_score_endpoint(game_key, player_key):
     try:
         session = db_session()
         game_repo = GameRepository(session)
@@ -84,6 +84,33 @@ def set_player_round_score_v2_endpoint(game_key, player_key):
         session.commit()
 
         return {'game': game}, 200
+    except BaseException as e:
+        print(e)
+        return {'error': "{0}".format(e)}, 500
+
+
+@games.route('/<uuid:game_key>', methods=['GET'])
+def fetch_game_endpoint(game_key):
+    try:
+        session = db_session()
+        repo = GameRepository(session)
+        game = repo.get(str(game_key))
+        if game is None:
+            return 404
+        return {'game': game}, 200
+    except BaseException as e:
+        return {'error': "{0}".format(e)}, 500
+
+
+@games.route('/<uuid:game_key>/players', methods=['GET'])
+def fetch_players_for_game(game_key):
+    try:
+        session = db_session()
+        repo = PlayerRepository(session)
+        players = repo.get_by_game_key(str(game_key))
+        if players is None:
+            return 404
+        return {'players': players}, 200
     except BaseException as e:
         print(e)
         return {'error': "{0}".format(e)}, 500
