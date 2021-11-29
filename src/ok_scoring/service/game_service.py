@@ -29,16 +29,16 @@ def update_dealer(new_game: Game, previous_score_history: [PlayerScoreHistory], 
             and is_round_complete(new_game.scoreHistory, round_index) \
             and not is_round_complete(previous_score_history, round_index):
         new_game.dealingPlayerKey = \
-            determine_next_dealer(new_game.scoreHistory, new_game.rulesV2, new_game.dealingPlayerKey)
+            determine_next_dealer(new_game.scoreHistory, new_game.rules, new_game.dealingPlayerKey)
     return new_game
 
 
 def update_winner(game):
-    game.winningPlayerKey = determine_winner(scoreHistory=game.scoreHistory, rules=game.rulesV2)
+    game.winningPlayerKey = determine_winner(scoreHistory=game.scoreHistory, rules=game.rules)
     return game
 
 
-def build_new_game(description: str, players: [Player] = None, rules: GameRules = None, rulesV2: GameRules = None) -> Game:
+def build_new_game(description: str, players: [Player] = None, rules: GameRules = None) -> Game:
     if description is None:
         raise DescriptionRequired(
             propertyPath='game.description',
@@ -51,7 +51,9 @@ def build_new_game(description: str, players: [Player] = None, rules: GameRules 
     score_history = build_score_history(
         player_keys=map(lambda p: p.key, players) if players is not None else [],
         game_key=game_key,
-        starting_score=rules.startingScore if rules is not None else 0,
+        # TODO Need to figure out the starting score piece here
+        # starting_score=rules.startingScore if rules is not None else 0,
+        starting_score=0,
         scores=[]
     )
 
@@ -60,7 +62,6 @@ def build_new_game(description: str, players: [Player] = None, rules: GameRules 
         description=description,
         date=date,
         rules=rules,
-        rulesV2=rulesV2,
         scoreHistory=score_history
     )
 

@@ -6,9 +6,8 @@ from ok_scoring.db.session import db_session
 from ok_scoring.model.validation_error import OKValidationError
 from ok_scoring.repository.game_repository import GameRepository
 from ok_scoring.repository.player_repository import PlayerRepository
-from ok_scoring.service.game_rules_service import build_new_game_rules_v2
-from ok_scoring.service.game_rules_service import can_add_round, validate_game_state
-from ok_scoring.service.game_service import build_new_game, update_winner_v2, update_dealer_v2
+from ok_scoring.service.game_rules_service import can_add_round, validate_game_state, build_new_game_rules
+from ok_scoring.service.game_service import build_new_game, update_winner, update_dealer
 from ok_scoring.service.player_score_history_service import set_round_score, find_by_player_key
 from ok_scoring.service.player_service import create_players
 
@@ -16,7 +15,7 @@ from ok_scoring.service.player_service import create_players
 games = Blueprint('games', __name__)
 
 
-@games.route('/', methods=['POST'])
+@games.route('', methods=['POST'])
 def create_game_endpoint():
     try:
         session = db_session()
@@ -28,10 +27,10 @@ def create_game_endpoint():
         players_repo.bulk_add(new_players)
 
         players = new_players + existing_players
-        rules = build_new_game_rules_v2(request.json.get('rules'))
+        rules = build_new_game_rules(request.json.get('rules'))
         game = build_new_game(description=request.json.get('description'),
                               players=players,
-                              rulesV2=rules)
+                              rules=rules)
         game_repo.add(game)
         session.commit()
         # Not sure if I need to return players here
@@ -79,8 +78,8 @@ def set_player_round_score_endpoint(game_key, player_key):
             validate_game_state(game)
         except ValidationError as e:
             return e, 422
-        update_winner_v2(game)
-        update_dealer_v2(new_game=game, round_index=round_index, previous_score_history=previous_score_history)
+        update_winner(game)
+        update_dealer(new_game=game, round_index=round_index, previous_score_history=previous_score_history)
         session.commit()
 
         return {'game': game}, 200

@@ -30,7 +30,7 @@ def convert_score_history_to_dict(score_history: [PlayerScoreHistory]) -> dict:
 
 
 def validate_game_state(game: Game):
-    schema = game.rulesV2.validStateSchema
+    schema = game.rules.validStateSchema
     score_history = game.scoreHistory
 
     # this is where JS would probably win out nicely in efficiency
@@ -39,7 +39,7 @@ def validate_game_state(game: Game):
 
 
 def is_game_won(game: Game) -> bool:
-    schema = game.rulesV2.winningSchema
+    schema = game.rules.winningSchema
 
     score_history = game.scoreHistory
 

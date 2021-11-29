@@ -10,9 +10,9 @@ from ok_scoring.service.player_score_history_service import set_round_score, is_
 class TestSetRoundScore(unittest.TestCase):
 
     def test_adding_round_score_updates_current_score(self):
-        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one')
-        round_two = ScoreRound(scores=[3], roundScore=3, key='2', playerScoreHistoryKey='one')
-        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one')
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        round_two = ScoreRound(scores=[3], roundScore=3, key='2', playerScoreHistoryKey='one', order=1)
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one', order=2)
         player_score_history_one = PlayerScoreHistory(
             key='one',
             scores=[round_one, round_two, round_three],
@@ -28,9 +28,9 @@ class TestSetRoundScore(unittest.TestCase):
         assert player_score_history_one.currentScore == -2
 
     def test_adding_round_score_beyond_last_index(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3], roundScore=3)
-        round_three = ScoreRound(scores=[-2], roundScore=-2)
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        round_two = ScoreRound(scores=[3], roundScore=3, key='2', playerScoreHistoryKey='one', order=1)
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one', order=2)
         player_score_history_one = PlayerScoreHistory(
             key='one',
             scores=[round_one, round_two, round_three],
@@ -44,9 +44,9 @@ class TestSetRoundScore(unittest.TestCase):
         assert len(player_score_history_one.scores) == 6
 
     def test_adding_round_score_idempotent(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3], roundScore=3)
-        round_three = ScoreRound(scores=[-2], roundScore=-2)
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        round_two = ScoreRound(scores=[3], roundScore=3, key='2', playerScoreHistoryKey='one', order=1)
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one', order=2)
         player_score_history_one = PlayerScoreHistory(
             key='one',
             scores=[round_one, round_two, round_three],
@@ -64,9 +64,9 @@ class TestSetRoundScore(unittest.TestCase):
         assert len(player_score_history_one.scores) == 4
 
     def test_updating_score_in_round(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3, 2, -1], roundScore=4)
-        round_three = ScoreRound(scores=[-2], roundScore=-2)
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        round_two = ScoreRound(scores=[3, 2, -1], roundScore=4, key='2', playerScoreHistoryKey='one', order=1)
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one', order=2)
         player_score_history_one = PlayerScoreHistory(
             key='one',
             scores=[round_one, round_two, round_three],
@@ -82,14 +82,33 @@ class TestSetRoundScore(unittest.TestCase):
         assert player_score_history_one.scores[1].scores[1] == 6
 
 
+    def test_adding_score_in_round(self):
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        round_two = ScoreRound(scores=[4], roundScore=4, key='2', playerScoreHistoryKey='one', order=1)
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one', order=2)
+        player_score_history_one = PlayerScoreHistory(
+            key='one',
+            scores=[round_one, round_two, round_three],
+            currentScore=3,
+            playerKey='1',
+            gameKey='1',
+            order=0
+        )
+        set_round_score(player_score_history_one, score=6, round_index=1, score_index=1)
+        assert player_score_history_one.currentScore == 9
+        assert len(player_score_history_one.scores) == 3
+        assert player_score_history_one.scores[1].roundScore == 10
+        assert player_score_history_one.scores[1].scores[1] == 6
+
+
 class TestCalculateRoundScore(unittest.TestCase):
     def test_no_round(self):
         assert calculate_round_score(None) is None
 
     def test_sums_round_scores(self):
-        round = ScoreRound(scores=[-1, 2, 4, 0, -2], roundScore=0)
-        round = calculate_round_score(round)
-        assert round.roundScore == 3
+        score_round = ScoreRound(scores=[-1, 2, 4, 0, -2], roundScore=0, key='1', playerScoreHistoryKey='one', order=0)
+        score_round = calculate_round_score(score_round)
+        assert score_round.roundScore == 3
 
 
 class TestCalculateCurrentScore(unittest.TestCase):
@@ -99,14 +118,14 @@ class TestCalculateCurrentScore(unittest.TestCase):
         assert calculate_current_score(None) == 0
 
     def test_one_round(self):
-        round_one = ScoreRound(scores=[4], roundScore=4)
-        assert calculate_current_score([round_one]) == 4
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        assert calculate_current_score([round_one]) == 1
 
     def test_multiple_round(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3, 2, -2], roundScore=3)
-        round_three = ScoreRound(scores=[5, 8], roundScore=13)
-        assert calculate_current_score([round_one, round_two, round_three]) == 17
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        round_two = ScoreRound(scores=[3, 2, -2], roundScore=3, key='2', playerScoreHistoryKey='one', order=1)
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one', order=2)
+        assert calculate_current_score([round_one, round_two, round_three]) == 2
 
 
 class TestBuildPlayerScoreHistory(unittest.TestCase):
@@ -244,9 +263,10 @@ class TestFindByOrderIndex(unittest.TestCase):
 class TestIsCurrentRound(unittest.TestCase):
 
     def test_current_round(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3], roundScore=3)
-        round_three = ScoreRound(scores=[-2], roundScore=-2)
+        round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        round_two = ScoreRound(scores=[3, 2, -2], roundScore=3, key='2', playerScoreHistoryKey='one', order=1)
+        round_three = ScoreRound(scores=[-2], roundScore=-2, key='3', playerScoreHistoryKey='one', order=2)
+
         player_score_history_one = PlayerScoreHistory(
             key='one',
             scores=[round_one, round_two, round_three],
@@ -272,19 +292,20 @@ class TestIsCurrentRound(unittest.TestCase):
 class TestIsRoundComplete(unittest.TestCase):
 
     def test_round_complete(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3], roundScore=3)
+        player_one_round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        player_one_round_Two = ScoreRound(scores=[3], roundScore=3, key='2', playerScoreHistoryKey='one', order=1)
         player_score_history_one = PlayerScoreHistory(
             key='one',
-            scores=[round_one, round_two],
+            scores=[player_one_round_one, player_one_round_Two],
             currentScore=1,
             playerKey='1',
             gameKey='1',
             order=0
         )
+        player_two_round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='two', order=0)
         player_score_history_two = PlayerScoreHistory(
             key='two',
-            scores=[round_one],
+            scores=[player_two_round_one],
             currentScore=1,
             playerKey='2',
             gameKey='1',
@@ -297,19 +318,20 @@ class TestIsRoundComplete(unittest.TestCase):
         assert is_round_complete(score_history, 0) is True
 
     def test_round_incomplete(self):
-        round_one = ScoreRound(scores=[1], roundScore=1)
-        round_two = ScoreRound(scores=[3], roundScore=3)
+        player_one_round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='one', order=0)
+        player_one_round_Two = ScoreRound(scores=[3], roundScore=3, key='2', playerScoreHistoryKey='one', order=1)
         player_score_history_one = PlayerScoreHistory(
             key='one',
-            scores=[round_one, round_two],
+            scores=[player_one_round_one, player_one_round_Two],
             currentScore=1,
             playerKey='1',
             gameKey='1',
             order=0
         )
+        player_two_round_one = ScoreRound(scores=[1], roundScore=1, key='1', playerScoreHistoryKey='two', order=0)
         player_score_history_two = PlayerScoreHistory(
             key='two',
-            scores=[round_one],
+            scores=[player_two_round_one],
             currentScore=1,
             playerKey='2',
             gameKey='1',

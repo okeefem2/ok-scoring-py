@@ -16,7 +16,7 @@ from ok_scoring.model.player_score_history import PlayerScoreHistory
 
 def start_mappers():
     clear_mappers()
-    game_rules_v2_mapper = mapper(
+    game_rules_mapper = mapper(
         GameRules,
         game_rules
     )

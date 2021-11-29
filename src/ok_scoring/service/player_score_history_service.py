@@ -20,6 +20,7 @@ class OrderRequired(OKValidationError):
 
 def set_round_score(score_history: PlayerScoreHistory, score, round_index, score_index):
     rounds = len(score_history.scores)
+    # Add a new round
     if round_index >= rounds:
         # default round score though...
         # if round_index is past the end of the current rounds list
@@ -47,7 +48,7 @@ def set_round_score(score_history: PlayerScoreHistory, score, round_index, score
         )
     # have to replace the list to get sqlalchemy to pick up the update
     scoreRound = score_history.scores[round_index]
-    scoreRound.scores = fill_missing_indexes_to_length(scoreRound.scores, score_index, lambda: 0)
+    scoreRound.scores = fill_missing_indexes_to_length(scoreRound.scores, score_index + 1, lambda: 0)
     scoreRound.scores = update_and_copy_list(scoreRound.scores, score, score_index)
     scoreRound = calculate_round_score(scoreRound)
     score_history.scores = update_and_copy_list(score_history.scores, scoreRound, round_index)

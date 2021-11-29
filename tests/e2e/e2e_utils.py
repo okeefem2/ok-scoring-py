@@ -40,7 +40,7 @@ def create_test_game(game: str, players: [str]) -> dict:
     }
     api_url = get_api_url()
 
-    response = requests.post(f'{api_url}/v2/games', json=data)
+    response = requests.post(f'{api_url}/games', json=data)
     assert response.status_code == 201
     game = response.json()['game']
     assert game['key'] is not None
@@ -55,7 +55,7 @@ def play_test_game(rounds: [ScoreRoundTestData], game_key: str):
         for s in r.scores:
             player_key = s.player_key
             data = {'round_index': r.round_index, 'score': s.score}
-            update_score_response = requests.post(f'{api_url}/v2/games/{game_key}/scores/{player_key}', json=data)
+            update_score_response = requests.post(f'{api_url}/games/{game_key}/scores/{player_key}', json=data)
             assert update_score_response.status_code == s.status
 
             if s.status == 200:

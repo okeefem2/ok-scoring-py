@@ -36,6 +36,7 @@ to run an individual e2e test
 
 ```bash
 pytest ./tests/e2e/test_play_cribbage.py
+
 ```
 
 ### Alembic migrations

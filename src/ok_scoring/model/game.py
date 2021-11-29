@@ -18,4 +18,4 @@ class Game:
     dealingPlayerKey: Optional[str] = None
 
     scoreHistory: Optional[list[PlayerScoreHistory]] = None
-    rulesV2: Optional[GameRules] = None
+    rules: Optional[GameRules] = None
