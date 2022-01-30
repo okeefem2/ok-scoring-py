@@ -81,5 +81,6 @@ List of items I would like to accomplish
       - duplicating a game
       - deleting data?
   - ML and analytics package []
+  - Deploy on DO
 
 

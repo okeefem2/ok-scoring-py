@@ -4,6 +4,7 @@ version: '3.1'
 services:
 
   app:
+    container_name: "ok-scoring-py-app"
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,6 +18,7 @@ services:
       - "5005:80"
 
   ok-scoring-db:
+    container_name: "ok-scoring-py-db"
     image: postgres
     restart: always
     env_file: docker-compose.env
@@ -24,12 +26,6 @@ services:
       - ok-scoring-data:/var/lib/postgresql
     ports:
       - 5432:5432
-
-#  adminer:
-#    image: adminer
-#    restart: always
-#    ports:
-#      - 8080:8080
 
 volumes:
   ok-scoring-data:
